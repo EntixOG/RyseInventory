@@ -31,26 +31,26 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.34")
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("shadow") {
-            groupId = "io.github.rysefoxx.inventory"
-            artifactId = "RyseInventory-Plugin"
-            version = "${project.version}"
-
-            pom {
-                name = "RyseInventory"
-                packaging = "jar"
-                description = "Inventory System"
-                url = "https://github.com/Rysefoxx/RyseInventory"
-            }
-            project.extensions.configure<com.github.jengelman.gradle.plugins.shadow.ShadowExtension> {
-                component(this@create)
-            }
-        }
-    }
-
-}
+//publishing {
+//    publications {
+//        create<MavenPublication>("shadow") {
+//            groupId = "io.github.rysefoxx.inventory"
+//            artifactId = "RyseInventory-Plugin"
+//            version = "${project.version}"
+//
+//            pom {
+//                name = "RyseInventory"
+//                packaging = "jar"
+//                description = "Inventory System"
+//                url = "https://github.com/Rysefoxx/RyseInventory"
+//            }
+//            project.extensions.configure<com.github.jengelman.gradle.plugins.shadow.ShadowExtension> {
+//                component(this@create)
+//            }
+//        }
+//    }
+//
+//}
 
 tasks {
     shadowJar {
