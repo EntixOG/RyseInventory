@@ -52,7 +52,9 @@ subprojects {
         publications {
             create<MavenPublication>("shadow") {
                 from(components["java"])
-                artifact(tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar").get())
+                artifact(tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar").get()) {
+                    classifier = "all"
+                }
             }
         }
         repositories {
