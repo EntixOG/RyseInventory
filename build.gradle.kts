@@ -1,8 +1,9 @@
 plugins {
     java
     `java-library`
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("io.github.goooler.shadow") version "8.1.8"
     `maven-publish`
+
 }
 
 group = "io.github.rysefoxx"
@@ -13,7 +14,7 @@ allprojects {
         plugin("java")
     }
     java {
-        sourceCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
     }
     tasks {
         compileJava {
@@ -26,7 +27,7 @@ allprojects {
 subprojects {
     apply {
         plugin("java-library")
-        plugin("com.github.johnrengelman.shadow")
+        plugin("io.github.goooler.shadow")
         plugin("maven-publish")
     }
 

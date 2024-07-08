@@ -27,8 +27,8 @@ dependencies {
     compileOnly("org.jetbrains:annotations:24.0.1")
     compileOnly("com.google.code.findbugs:jsr305:3.0.2")
 
-    annotationProcessor("org.projectlombok:lombok:1.18.24")
-    compileOnly("org.projectlombok:lombok:1.18.24")
+    annotationProcessor("org.projectlombok:lombok:1.18.34")
+    compileOnly("org.projectlombok:lombok:1.18.34")
 }
 
 publishing {
@@ -49,16 +49,7 @@ publishing {
             }
         }
     }
-    repositories {
-        maven {
-            name = "nexus"
-            url = uri("https://repo.networkmanager.xyz/repository/maven-networkmanager/")
-            credentials {
-                username = project.property("NEXUS_USERNAME").toString()
-                password = project.property("NEXUS_PASSWORD").toString()
-            }
-        }
-    }
+
 }
 
 tasks {
