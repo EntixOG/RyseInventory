@@ -41,11 +41,9 @@ subprojects {
         withJavadocJar()
     }
 
-    tasks {
-        shadowJar {
-            archiveClassifier.set("")
-            mergeServiceFiles()
-        }
+    tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+        archiveClassifier.set("all")
+        mergeServiceFiles()
     }
 
     publishing {
@@ -67,11 +65,17 @@ subprojects {
     }
 }
 
-tasks.named("build") { dependsOn(tasks.named("shadowJar")) }
-
-tasks {
-    shadowJar {
-        archiveClassifier.set("")
-        mergeServiceFiles()
+project(":plugin") {
+    tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+        dependsOn(project(":api").tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar"))
     }
+}
+
+tasks.named("build") {
+    dependsOn(tasks.named("shadowJar"))
+}
+
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    archiveClassifier.set("all")
+    mergeServiceFiles()
 }
