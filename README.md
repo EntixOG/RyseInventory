@@ -1,4 +1,4 @@
-# RyseInventory 1.8-1.19 ![](https://i.imgur.com/BS3gwxL.png)
+# RyseInventory 1.8-1.21 ![](https://i.imgur.com/BS3gwxL.png)
 
 Inventory System inspired by [SmartInventory](https://github.com/MinusKube/SmartInvs)!
 
@@ -6,11 +6,6 @@ This API is used to create and manage inventories in Minecraft more easily. Acro
 managed easily. Besides, you don't have to worry about the pages, because they are managed automatically. Moreover, many
 things can be done with the inventory. More about this under the
 point [Features](https://github.com/Rysefoxx/RyseInventory#features)
-
-# Discord
-Currently programming a bot for the upcoming RyseInventory Discord bot. You can get more information [here](https://github.com/RyseInventory/RyseInventorySupport)
-
-Feel free to join my Discord to stay up to date. [Click here](https://discord.gg/GAnXF7BzKg)
 
 # Adventure
 If no paper is used, the adventure libraries must be added!
@@ -52,10 +47,10 @@ _In the newer versions you can specify the API in your plugin.yml under Librarie
 ```
 repositories {
     mavenCentral()
-    maven { url "https://s01.oss.sonatype.org/content/groups/public/" }
+    maven { url "https://repo.entixog.de/releases" }
 }
 dependencies {
-    implementation 'io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.5'
+    implementation 'io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.12'
 }
 ```
 
@@ -64,10 +59,10 @@ dependencies {
 ```
 repositories {
     mavenCentral()
-    maven { url = uri("https://s01.oss.sonatype.org/content/groups/public/") }
+    maven { url = uri("https://repo.entixog.de/releases") }
 }
 dependencies {
-    implementation("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.5")
+    implementation("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.12")
 }
 ```
 
@@ -76,15 +71,15 @@ dependencies {
 ```xml
 <repositories>
     <repository>
-        <id>sonatype</id>
-        <url>"https://s01.oss.sonatype.org/content/groups/public/"</url>
+        <id>entix-repository</id>
+        <url>"https://repo.entixog.de/releases"</url>
     </repository>
 </repositories>
 
 <dependency>
   <groupId>io.github.rysefoxx.inventory</groupId>
   <artifactId>RyseInventory-Plugin</artifactId>
-  <version>1.6.5</version>
+  <version>1.6.12</version>
 </dependency>
 ```
 
