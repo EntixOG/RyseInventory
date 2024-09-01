@@ -40,30 +40,8 @@ subprojects {
         withSourcesJar()
         withJavadocJar()
     }
-
-    tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-        archiveClassifier.set("all")
-        mergeServiceFiles()
-    }
-
-    publishing {
-        publications {
-            create<MavenPublication>("shadow") {
-                from(components["java"])
-                artifact(tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar").get()) {
-                    classifier = "all"
-                }
-            }
-        }
-        repositories {
-            mavenLocal()
-        }
-    }
-
-    tasks.named("publishShadowPublicationToMavenLocal") {
-        dependsOn(tasks.named("shadowJar"))
-    }
 }
+
 
 project(":plugin") {
     tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
