@@ -733,7 +733,7 @@ public class RyseInventory {
      * @return null if there is no custom event matching the event class
      */
     public @Nullable EventCreator<? extends Event> getEvent(@NotNull Class<? extends Event> event) {
-        return this.events.stream().filter(eventOne -> event == eventOne.getClazz())
+        return this.events.stream().filter(eventOne -> event == eventOne.clazz())
                 .findFirst()
                 .orElse(null);
     }

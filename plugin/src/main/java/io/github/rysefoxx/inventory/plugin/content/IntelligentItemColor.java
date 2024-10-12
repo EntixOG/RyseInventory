@@ -29,6 +29,7 @@ import com.cryptomorin.xseries.reflection.XReflection;
 import io.github.rysefoxx.inventory.api.IntelligentItemColorWrapper;
 import io.github.rysefoxx.inventory.plugin.util.VersionUtils;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.ChatColor;
@@ -43,6 +44,7 @@ import javax.annotation.Nonnegative;
  * @author Rysefoxx(Rysefoxx # 6772) | eazypaulCode(eazypaulCode # 0001) |
  * @since 4/12/2022
  */
+@Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IntelligentItemColor {
 
@@ -51,6 +53,11 @@ public class IntelligentItemColor {
     private net.md_5.bungee.api.ChatColor bungeeColor;
     private String hexColor;
     private int[] rgbColor = new int[3];
+    /**
+     * -- GETTER --
+     *
+     * @return true if the color is bold
+     */
     private boolean bold;
     private boolean underline;
     private boolean italic;
@@ -141,41 +148,6 @@ public class IntelligentItemColor {
             return colorWrapper.getColor(this.hexColor, null);
 
         return colorWrapper.getColor(null, this.rgbColor);
-    }
-
-    /**
-     * @return true if the color is bold
-     */
-    public boolean isBold() {
-        return this.bold;
-    }
-
-    /**
-     * @return true if the color is underlined
-     */
-    public boolean isUnderline() {
-        return this.underline;
-    }
-
-    /**
-     * @return true if the color is italic
-     */
-    public boolean isItalic() {
-        return this.italic;
-    }
-
-    /**
-     * @return true if the color is obfuscated
-     */
-    public boolean isObfuscated() {
-        return this.obfuscated;
-    }
-
-    /**
-     * @return true if the color is striked through
-     */
-    public boolean isStrikeThrough() {
-        return this.strikeThrough;
     }
 
     public static class Builder {

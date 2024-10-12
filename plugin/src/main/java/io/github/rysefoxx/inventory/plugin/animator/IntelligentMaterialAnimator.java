@@ -161,68 +161,6 @@ public class IntelligentMaterialAnimator {
                             this.currentFrameIndex = 0;
                     }
                 }, this.delay, this.period);
-        /*this.task = Bukkit.getScheduler().runTaskTimer(plugin, new Runnable() {
-            final List<String> framesCopy = frames;
-            final ItemStack itemStack = new ItemStack(intelligentItem.getItemStack());
-            int materialState = 0;
-            int subStringIndex = 0;
-            int currentFrameIndex = 0;
-            Material currentMaterial;
-
-            @Override
-            public void run() {
-                char[] currentFrames = framesCopy.get(this.currentFrameIndex).toCharArray();
-
-                resetWhenFrameFinished(currentFrames);
-
-                if (cancelIfListIsEmpty()) return;
-
-                currentFrames = updateFramesWhenRequired(currentFrames);
-
-                char singleFrame = currentFrames[this.materialState];
-
-                this.currentMaterial = frameMaterial.get(singleFrame);
-                this.materialState++;
-                this.subStringIndex++;
-
-                this.itemStack.setType(this.currentMaterial);
-                contents.update(slot, this.itemStack);
-            }
-
-            private char @NotNull [] updateFramesWhenRequired(char @NotNull [] currentFrames) {
-                if (this.materialState < currentFrames.length) return currentFrames;
-
-                this.materialState = 0;
-                if (this.framesCopy.size() > 1 && (this.currentFrameIndex + 1 != this.framesCopy.size())) {
-                    this.currentFrameIndex++;
-                    currentFrames = this.framesCopy.get(this.currentFrameIndex).toCharArray();
-                }
-                return currentFrames;
-            }
-
-            private boolean cancelIfListIsEmpty() {
-                if (this.framesCopy.isEmpty()) {
-                    inventory.removeMaterialAnimator(IntelligentMaterialAnimator.this);
-                    return true;
-                }
-                return false;
-            }
-
-            private void resetWhenFrameFinished(char[] currentFrames) {
-                if (this.subStringIndex < finalLength) return;
-
-                if (!loop)
-                    this.framesCopy.remove(0);
-                this.materialState = 0;
-                this.subStringIndex = 0;
-
-                if (!this.framesCopy.isEmpty())
-                    this.currentMaterial = frameMaterial.get(currentFrames[this.materialState]);
-
-                if (this.currentFrameIndex + 1 >= this.framesCopy.size())
-                    this.currentFrameIndex = 0;
-            }
-        }, this.delay, this.period);*/
     }
 
     /**

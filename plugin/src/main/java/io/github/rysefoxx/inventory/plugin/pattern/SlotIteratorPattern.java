@@ -25,7 +25,9 @@
 
 package io.github.rysefoxx.inventory.plugin.pattern;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,9 +42,12 @@ import java.util.List;
  * The class is marked as 'beta' because of possible bugs.
  * @since 6/11/2022
  */
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class SlotIteratorPattern {
-    private @Getter List<String> lines = new ArrayList<>();
-    private @Getter char attachedChar;
+
+    List<String> lines = new ArrayList<>();
+    char attachedChar;
 
     @Contract(value = " -> new", pure = true)
     public static @NotNull Builder builder() {

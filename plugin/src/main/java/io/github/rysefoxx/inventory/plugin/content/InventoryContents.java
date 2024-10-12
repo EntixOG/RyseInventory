@@ -40,6 +40,7 @@ import io.github.rysefoxx.inventory.plugin.pattern.SearchPattern;
 import io.github.rysefoxx.inventory.plugin.util.*;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -51,6 +52,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.signature.qual.FieldDescriptorForPrimitive;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -70,17 +72,19 @@ import java.util.function.Consumer;
  * @since 2/17/2022
  */
 @SuppressWarnings("unused")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class InventoryContents {
 
-    private final Player player;
-    private final Pagination pagination;
-    private final RyseInventory inventory;
     @Getter(AccessLevel.PROTECTED)
-    private final Plugin plugin;
+    Plugin plugin;
 
-    private final HashMap<String, Object> properties = new HashMap<>();
-    private final SearchPattern searchPattern = new SearchPattern(this);
-    private final ContentPattern contentPattern = new ContentPattern(this);
+    Player player;
+    Pagination pagination;
+    RyseInventory inventory;
+
+    HashMap<String, Object> properties = new HashMap<>();
+    SearchPattern searchPattern = new SearchPattern(this);
+    ContentPattern contentPattern = new ContentPattern(this);
 
     public InventoryContents(@NotNull Player player,
                              @NotNull RyseInventory inventory,
@@ -596,8 +600,8 @@ public class InventoryContents {
     /**
      * Updates the ItemStack in the same place with a new ItemStack or sets if not found.
      *
-     * @param row      The Row
-     * @param column   The Column
+     * @param row       The Row
+     * @param column    The Column
      * @param itemStack The new ItemStack what should be displayed.
      * @return true if the ItemStack was updated, false if set.
      * @throws IllegalArgumentException if slot greater than 53 or slot greater than inventory size
@@ -609,8 +613,8 @@ public class InventoryContents {
     /**
      * Updates the ItemStack in the same place with a new ItemStack or sets if not found.
      *
-     * @param row      The Row
-     * @param column   The Column
+     * @param row             The Row
+     * @param column          The Column
      * @param intelligentItem The new IntelligentItem what should be displayed.
      * @return true if the ItemStack was updated, false if set.
      * @throws IllegalArgumentException if slot greater than 53 or slot greater than inventory size

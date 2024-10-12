@@ -27,7 +27,10 @@ package io.github.rysefoxx.inventory.plugin.other;
 
 
 import io.github.rysefoxx.inventory.plugin.pagination.RyseInventory;
-import org.jetbrains.annotations.Contract;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -39,16 +42,9 @@ import java.util.function.Consumer;
  * @author Rysefoxx | Rysefoxx#6772
  * @since 2/19/2022
  */
-public class EventCreator<T> {
-
-    private final Class<T> clazz;
-    private final Consumer<T> consumer;
-
-    @Contract(pure = true)
-    public EventCreator(@NotNull Class<T> clazz, @NotNull Consumer<T> consumer) {
-        this.clazz = clazz;
-        this.consumer = consumer;
-    }
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public record EventCreator<T>(Class<T> clazz, Consumer<T> consumer) {
 
     public void accept(T t) {
         this.consumer.accept(t);
@@ -59,7 +55,8 @@ public class EventCreator<T> {
      *
      * @return The class of the object.
      */
-    public @NotNull Class<T> getClazz() {
+    @Override
+    public @NotNull Class<T> clazz() {
         return clazz;
     }
 }

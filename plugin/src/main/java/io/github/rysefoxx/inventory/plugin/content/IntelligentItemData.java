@@ -25,8 +25,11 @@
 
 package io.github.rysefoxx.inventory.plugin.content;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
+import org.checkerframework.common.initializedfields.qual.InitializedFieldsBottom;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,16 +41,17 @@ import javax.annotation.Nonnegative;
  */
 @Setter
 @Getter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class IntelligentItemData {
 
-    private final IntelligentItem item;
-    private int amount;
-    private int page;
-    private int originalSlot;
-    private int modifiedSlot;
+    final IntelligentItem item;
+    int amount;
+    int page;
+    int originalSlot;
+    int modifiedSlot;
 
-    private boolean transfer;
-    private boolean presetOnAllPages;
+    boolean transfer;
+    boolean presetOnAllPages;
 
     @Contract(pure = true)
     public IntelligentItemData(@NotNull IntelligentItem item,

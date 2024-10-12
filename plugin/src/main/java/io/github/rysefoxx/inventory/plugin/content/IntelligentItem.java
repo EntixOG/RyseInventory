@@ -26,7 +26,9 @@
 package io.github.rysefoxx.inventory.plugin.content;
 
 import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -46,20 +48,21 @@ import java.util.function.Consumer;
  * @since 2/18/2022
  */
 @Getter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class IntelligentItem {
 
-    private final ItemStack itemStack;
-    private final IntelligentItemError error;
+    final ItemStack itemStack;
+    final IntelligentItemError error;
 
-    private Consumer<InventoryClickEvent> defaultConsumer;
+    Consumer<InventoryClickEvent> defaultConsumer;
 
-    private boolean canClick = true;
-    private boolean canSee = true;
-    private boolean advanced = false;
-    private int delay;
+    boolean canClick = true;
+    boolean canSee = true;
+    boolean advanced = false;
+    int delay;
 
-    private @Nullable Object id;
-    private @Nullable ScheduledTask delayTask;
+    @Nullable Object id;
+    @Nullable ScheduledTask delayTask;
 
     //For serialization
     @Contract(pure = true)
@@ -291,11 +294,12 @@ public class IntelligentItem {
     public @NotNull IntelligentItem update(@NotNull IntelligentItem newIntelligentItem) {
         return new IntelligentItem(newIntelligentItem.getItemStack(), this.delay, newIntelligentItem.getDefaultConsumer(), this.error);
     }
+
     /**
      * Changes the ItemStack of an existing Intelligent with changing the consumer.
      *
      * @param newIntelligentItem The new IntelligentItem
-     * @param delayInTicks The delay in ticks before the consumer is called. (1 Sec = 20 Ticks)
+     * @param delayInTicks       The delay in ticks before the consumer is called. (1 Sec = 20 Ticks)
      * @return The new intelligent ItemStack
      */
     public @NotNull IntelligentItem update(@NotNull IntelligentItem newIntelligentItem, int delayInTicks) {

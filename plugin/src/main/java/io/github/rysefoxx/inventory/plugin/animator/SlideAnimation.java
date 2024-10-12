@@ -163,46 +163,6 @@ public class SlideAnimation {
                             this.fromIndex -= 8;
                         }
                     }.runAtFixedRate(this.delay, this.period);
-
-            /*BukkitTask bukkitTask = new BukkitRunnable() {
-                final int toIndex = to.get(finalI);
-                final IntelligentItem item = items.get(finalI);
-                final boolean isTopLeft = direction == AnimatorDirection.DIAGONAL_TOP_LEFT;
-                int fromIndex = from.get(finalI);
-                int previousIndex = fromIndex;
-
-                @Override
-                public void run() {
-                    if (moreDelay && wait[0] > 0) {
-                        wait[0]--;
-                        return;
-                    }
-
-                    if (this.isTopLeft) {
-                        if (this.fromIndex > this.toIndex) {
-                            cancel();
-                            return;
-                        }
-                    } else if (this.fromIndex < this.toIndex) {
-                        cancel();
-                        return;
-                    }
-
-                    if (this.fromIndex != from.get(finalI)) {
-                        contents.removeItemWithConsumer(this.previousIndex);
-                    }
-
-                    contents.set(this.fromIndex, this.item);
-                    contents.update(this.fromIndex, this.item);
-
-                    this.previousIndex = this.fromIndex;
-                    if (this.isTopLeft) {
-                        this.fromIndex += 10;
-                        return;
-                    }
-                    this.fromIndex -= 8;
-                }
-            }.runTaskTimer(plugin, this.delay, this.period);*/
             this.task.add(scheduledTask);
         }
     }
@@ -260,45 +220,6 @@ public class SlideAnimation {
                     this.fromIndex -= 10;
                 }
             }.runAtFixedRate(this.delay, this.period);
-
-            /*BukkitTask bukkitTask = new BukkitRunnable() {
-                final int toIndex = to.get(finalI);
-                final IntelligentItem item = items.get(finalI);
-                final boolean isTopRight = direction == AnimatorDirection.DIAGONAL_TOP_RIGHT;
-                int fromIndex = from.get(finalI);
-                int previousIndex = fromIndex;
-
-                @Override
-                public void run() {
-                    if (moreDelay && wait[0] > 0) {
-                        wait[0]--;
-                        return;
-                    }
-
-                    if (this.isTopRight) {
-                        if (this.fromIndex > this.toIndex) {
-                            cancel();
-                            return;
-                        }
-                    } else if (this.fromIndex < this.toIndex) {
-                        cancel();
-                        return;
-                    }
-
-                    if (this.fromIndex != from.get(finalI))
-                        contents.removeItemWithConsumer(this.previousIndex);
-
-                    contents.set(this.fromIndex, this.item);
-                    contents.update(this.fromIndex, this.item);
-
-                    this.previousIndex = this.fromIndex;
-                    if (this.isTopRight) {
-                        this.fromIndex += 8;
-                        return;
-                    }
-                    this.fromIndex -= 10;
-                }
-            }.runTaskTimer(plugin, this.delay, this.period);*/
             this.task.add(scheduledTask);
         }
     }
@@ -357,46 +278,6 @@ public class SlideAnimation {
 
                 }
             }.runAtFixedRate(this.delay, this.period);
-
-            /*BukkitTask bukkitTask = new BukkitRunnable() {
-                final int toIndex = to.get(finalI);
-                final IntelligentItem item = items.get(finalI);
-                final boolean leftToRight = direction == AnimatorDirection.HORIZONTAL_LEFT_RIGHT;
-                int fromIndex = from.get(finalI);
-                int previousIndex = fromIndex;
-
-                @Override
-                public void run() {
-                    if (moreDelay && wait[0] > 0) {
-                        wait[0]--;
-                        return;
-                    }
-
-                    if (this.leftToRight) {
-                        if (this.fromIndex > this.toIndex) {
-                            cancel();
-                            return;
-                        }
-                    } else if (this.fromIndex < this.toIndex) {
-                        cancel();
-                        return;
-                    }
-
-                    if (this.fromIndex != from.get(finalI))
-                        contents.removeItemWithConsumer(this.previousIndex);
-
-                    contents.set(this.fromIndex, this.item);
-                    contents.update(this.fromIndex, this.item);
-
-                    this.previousIndex = this.fromIndex;
-                    if (this.leftToRight) {
-                        this.fromIndex++;
-                        return;
-                    }
-                    this.fromIndex--;
-
-                }
-            }.runTaskTimer(plugin, this.delay, this.period);*/
             this.task.add(scheduledTask);
         }
     }
@@ -456,47 +337,6 @@ public class SlideAnimation {
 
                 }
             }.runAtFixedRate(this.delay, this.period);
-
-            /*BukkitTask bukkitTask = new BukkitRunnable() {
-                final int toIndex = to.get(finalI);
-                final IntelligentItem item = items.get(finalI);
-                final boolean upToDown = direction == AnimatorDirection.VERTICAL_UP_DOWN;
-                int fromIndex = from.get(finalI);
-                int previousIndex = fromIndex;
-
-                @Override
-                public void run() {
-                    if (moreDelay && wait[0] > 0) {
-                        wait[0]--;
-                        return;
-                    }
-
-                    if (this.upToDown) {
-                        if (this.fromIndex > this.toIndex) {
-                            cancel();
-                            return;
-                        }
-                    } else if (this.fromIndex < this.toIndex) {
-                        cancel();
-                        return;
-                    }
-
-                    if (this.fromIndex != from.get(finalI)) {
-                        contents.removeItemWithConsumer(this.previousIndex);
-                    }
-
-                    contents.set(this.fromIndex, this.item);
-                    contents.update(this.fromIndex, this.item);
-
-                    this.previousIndex = this.fromIndex;
-                    if (this.upToDown) {
-                        this.fromIndex += 9;
-                        return;
-                    }
-                    this.fromIndex -= 9;
-
-                }
-            }.runTaskTimer(plugin, this.delay, this.period);*/
             this.task.add(scheduledTask);
         }
     }

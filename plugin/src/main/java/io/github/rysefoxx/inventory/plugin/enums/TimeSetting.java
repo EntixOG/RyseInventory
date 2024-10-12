@@ -26,25 +26,27 @@
 package io.github.rysefoxx.inventory.plugin.enums;
 
 import io.github.rysefoxx.inventory.plugin.util.TimeUtils;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
+
+@Getter
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum TimeSetting {
 
     MILLISECONDS("ms"),
     SECONDS("s"),
-    MINUTES("m"),
-    ;
+    MINUTES("m");
 
-    private final String shortCut;
-
-    @Contract(pure = true)
-    TimeSetting(@NotNull String shortCut) {
-        this.shortCut = shortCut;
-    }
+    String shortCut;
 
     public static @Nullable TimeSetting fromName(@NotNull String name) {
         return Arrays.stream(values())
