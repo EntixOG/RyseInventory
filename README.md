@@ -50,7 +50,7 @@ repositories {
     maven { url "https://repo.entixog.de/releases" }
 }
 dependencies {
-    implementation 'io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.12'
+    implementation 'io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.15'
 }
 ```
 
@@ -62,7 +62,7 @@ repositories {
     maven { url = uri("https://repo.entixog.de/releases") }
 }
 dependencies {
-    implementation("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.12")
+    implementation("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.15")
 }
 ```
 
@@ -79,7 +79,7 @@ dependencies {
 <dependency>
   <groupId>io.github.rysefoxx.inventory</groupId>
   <artifactId>RyseInventory-Plugin</artifactId>
-  <version>1.6.12</version>
+  <version>1.6.15</version>
 </dependency>
 ```
 
