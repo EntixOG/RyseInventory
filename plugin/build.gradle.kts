@@ -17,9 +17,9 @@ dependencies {
     implementation(project(":v1_17"))
     implementation(project(":v1_16"))
     implementation(project(":api"))
-    implementation("net.wesjd:anvilgui:1.9.2-SNAPSHOT")
+    implementation("net.wesjd:anvilgui:1.10.2-SNAPSHOT")
     implementation("space.arim.morepaperlib:morepaperlib:0.4.4")
-    implementation("com.github.cryptomorin:XSeries:11.0.0") { isTransitive = false }
+    implementation("com.github.cryptomorin:XSeries:11.3.0") { isTransitive = false }
 
     compileOnly("net.kyori:adventure-platform-bukkit:4.3.1")
     compileOnly("org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT")
