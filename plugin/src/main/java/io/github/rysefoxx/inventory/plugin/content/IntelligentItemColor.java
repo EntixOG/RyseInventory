@@ -53,11 +53,7 @@ public class IntelligentItemColor {
     private net.md_5.bungee.api.ChatColor bungeeColor;
     private String hexColor;
     private int[] rgbColor = new int[3];
-    /**
-     * -- GETTER --
-     *
-     * @return true if the color is bold
-     */
+  
     private boolean bold;
     private boolean underline;
     private boolean italic;

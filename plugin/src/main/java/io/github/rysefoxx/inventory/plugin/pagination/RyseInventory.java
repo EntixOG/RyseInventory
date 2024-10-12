@@ -912,7 +912,8 @@ public class RyseInventory {
      *
      * @return The number of active slide animator tasks.
      */
-    protected @Nonnegative int activeSlideAnimatorTasks() {
+    @Nonnegative
+    public int activeSlideAnimatorTasks() {
         if (this.slideAnimator == null) return 0;
         AtomicInteger counter = new AtomicInteger();
 
@@ -928,7 +929,8 @@ public class RyseInventory {
      *
      * @return A list of CloseReason objects.
      */
-    protected @NotNull List<CloseReason> getCloseReasons() {
+    @NotNull
+    public List<CloseReason> getCloseReasons() {
         return closeReasons;
     }
 
@@ -1395,7 +1397,7 @@ public class RyseInventory {
      *
      * @param player The player who's inventory is being cleared.
      */
-    protected void clearData(@NotNull Player player) {
+    public void clearData(@NotNull Player player) {
         if (this.playerInventory.containsKey(player.getUniqueId())) {
             ItemStack[] data = this.playerInventory.remove(player.getUniqueId());
             /*Bukkit.getScheduler().runTaskLater(this.plugin, () -> player.getInventory().setContents(data), 2);*/

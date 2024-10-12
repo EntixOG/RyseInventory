@@ -30,6 +30,8 @@ import io.github.rysefoxx.inventory.plugin.content.IntelligentItem;
 import io.github.rysefoxx.inventory.plugin.content.InventoryContents;
 import io.github.rysefoxx.inventory.plugin.enums.*;
 import io.github.rysefoxx.inventory.plugin.events.*;
+import io.github.rysefoxx.inventory.plugin.listener.*;
+import io.github.rysefoxx.inventory.plugin.listener.own.*;
 import io.github.rysefoxx.inventory.plugin.other.EventCreator;
 import io.github.rysefoxx.inventory.plugin.util.InventoryUtil;
 import lombok.AccessLevel;
@@ -77,10 +79,15 @@ public class InventoryManager {
     @Getter(AccessLevel.PROTECTED)
     private boolean invoked = false;
 
+    @Getter
+    private final HashMap<UUID, RyseInventory> inventories = new HashMap<>();
+
+    @Getter
+    private final HashMap<UUID, InventoryContents> content = new HashMap<>();
+
+
     private final Set<IntelligentItem> items = new HashSet<>();
     private final List<RyseInventory> cachedInventories = new ArrayList<>();
-    private final HashMap<UUID, RyseInventory> inventories = new HashMap<>();
-    private final HashMap<UUID, InventoryContents> content = new HashMap<>();
     private final HashMap<UUID, ScheduledTask> updaterTask = new HashMap<>();
     private final HashMap<UUID, List<RyseInventory>> lastInventories = new HashMap<>();
     private final HashMap<UUID, Long> lastOpen = new HashMap<>();
@@ -145,7 +152,7 @@ public class InventoryManager {
      * With this method you can get the inventory from the player.
      *
      * @param uuid The UUID of the player.
-     * @return null if the player has no inventory open.
+     * @return if the player has no inventory open.
      */
     public @NotNull Optional<RyseInventory> getInventory(@NotNull UUID uuid) {
         if (!hasInventory(uuid)) return Optional.empty();
@@ -175,7 +182,7 @@ public class InventoryManager {
      * Get the last inventory that the player had open.
      *
      * @param uuid Player UUID
-     * @return null if there is no final inventory.
+     * @return if there is no final inventory.
      */
     public @NotNull Optional<RyseInventory> getLastInventory(@NotNull UUID uuid) {
         if (!this.lastInventories.containsKey(uuid)) return Optional.empty();
@@ -190,7 +197,7 @@ public class InventoryManager {
      * With this method you can get the inventory from the inventory identifier.
      *
      * @param identifier The ID to identify
-     * @return null if no inventory with the ID could be found.
+     * @return if no inventory with the ID could be found.
      * <p>
      * Only works if the inventory has also been assigned an identifier.
      */
@@ -224,7 +231,22 @@ public class InventoryManager {
      * Registers the standard events
      */
     public void invoke() {
-        Bukkit.getPluginManager().registerEvents(new InventoryListener(), this.plugin);
+        Bukkit.getPluginManager().registerEvents(new BlockBreakListener(this), this.plugin);
+        Bukkit.getPluginManager().registerEvents(new EntityDamageListener(this), this.plugin);
+        Bukkit.getPluginManager().registerEvents(new FoodLevelChangeListener(this), this.plugin);
+        Bukkit.getPluginManager().registerEvents(new InventoryClickListener(this), this.plugin);
+        Bukkit.getPluginManager().registerEvents(new InventoryCloseListener(this), this.plugin);
+        Bukkit.getPluginManager().registerEvents(new InventoryDragListener(this), this.plugin);
+        Bukkit.getPluginManager().registerEvents(new PlayerPickupItemListener(this), this.plugin);
+        Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(this), this.plugin);
+        Bukkit.getPluginManager().registerEvents(new PluginDisableListener(this, this.plugin), this.plugin);
+        Bukkit.getPluginManager().registerEvents(new PotionSplashListener(this), this.plugin);
+
+        Bukkit.getPluginManager().registerEvents(new RyseInventoryCloseListener(this), this.plugin);
+        Bukkit.getPluginManager().registerEvents(new RyseInventoryOpenListener(this), this.plugin);
+        Bukkit.getPluginManager().registerEvents(new RyseInventoryPreCloseListener(this), this.plugin);
+        Bukkit.getPluginManager().registerEvents(new RyseInventoryPreOpenListener(this), this.plugin);
+        Bukkit.getPluginManager().registerEvents(new RyseInventoryTitleChangeListener(this), this.plugin);
         invoked = true;
     }
 
@@ -235,7 +257,7 @@ public class InventoryManager {
      * @return true when the player has an inventory.
      */
     @Contract(pure = true)
-    private boolean hasInventory(@NotNull UUID uuid) {
+    public boolean hasInventory(@NotNull UUID uuid) {
         return this.inventories.containsKey(uuid);
     }
 
@@ -354,612 +376,5 @@ public class InventoryManager {
      */
     protected void addToCache(RyseInventory ryseInventory) {
         this.cachedInventories.add(ryseInventory);
-    }
-
-    /**
-     * It's a class that listens for events and cancels them if the player is viewing a RyseInventory
-     */
-    public class InventoryListener implements Listener {
-
-        @Contract(pure = true)
-        private boolean hasContents(@NotNull UUID uuid) {
-            return content.containsKey(uuid);
-        }
-
-        @EventHandler(ignoreCancelled = true)
-        public void onEntityDamage(@NotNull EntityDamageEvent event) {
-            if (!(event.getEntity() instanceof Player)) return;
-            Player player = (Player) event.getEntity();
-
-            if (!hasInventory(player.getUniqueId()))
-                return;
-
-            RyseInventory mainInventory = inventories.get(player.getUniqueId());
-
-            if (!mainInventory.getOptions().contains(InventoryOptions.NO_DAMAGE)) return;
-            event.setCancelled(true);
-        }
-
-        @EventHandler(ignoreCancelled = true)
-        public void onFoodLevelChange(@NotNull FoodLevelChangeEvent event) {
-            if (!(event.getEntity() instanceof Player)) return;
-            Player player = (Player) event.getEntity();
-
-            if (!hasInventory(player.getUniqueId()))
-                return;
-
-            RyseInventory mainInventory = inventories.get(player.getUniqueId());
-
-            if (!mainInventory.getOptions().contains(InventoryOptions.NO_HUNGER)) return;
-            event.setCancelled(true);
-        }
-
-        @EventHandler(ignoreCancelled = true)
-        public void onPlayerPickupItem(@NotNull PlayerPickupItemEvent event) {
-            Player player = event.getPlayer();
-            if (!hasInventory(player.getUniqueId()))
-                return;
-
-            RyseInventory mainInventory = inventories.get(player.getUniqueId());
-
-            if (!mainInventory.getOptions().contains(InventoryOptions.NO_ITEM_PICKUP)) return;
-            event.setCancelled(true);
-        }
-
-        @EventHandler(ignoreCancelled = true)
-        public void onPotionSplash(@NotNull PotionSplashEvent event) {
-
-            for (LivingEntity entity : event.getAffectedEntities()) {
-                if (!(entity instanceof Player)) continue;
-                Player player = (Player) entity;
-                if (!hasInventory(player.getUniqueId()))
-                    continue;
-
-                RyseInventory mainInventory = inventories.get(player.getUniqueId());
-
-                if (!mainInventory.getOptions().contains(InventoryOptions.NO_POTION_EFFECT)) continue;
-                event.setCancelled(true);
-
-            }
-        }
-
-        @EventHandler(ignoreCancelled = true)
-        public void onBlockBreak(@NotNull BlockBreakEvent event) {
-            Block block = event.getBlock();
-            Location toCheck = block.getLocation().clone().add(0, 1, 0);
-
-            List<Player> onBlock = new ArrayList<>();
-
-            Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
-                if (onlinePlayer.getLocation().getBlockX() == toCheck.getBlockX() &&
-                        onlinePlayer.getLocation().getBlockY() == toCheck.getBlockY() &&
-                        onlinePlayer.getLocation().getBlockZ() == toCheck.getBlockZ()) {
-                    onBlock.add(onlinePlayer);
-                }
-            });
-
-            if (!onBlock.isEmpty()) {
-                onBlock.forEach(affectedPlayer -> {
-                    if (!hasInventory(affectedPlayer.getUniqueId()))
-                        return;
-
-                    RyseInventory mainInventory = inventories.get(affectedPlayer.getUniqueId());
-
-                    if (!mainInventory.getOptions().contains(InventoryOptions.NO_BLOCK_BREAK)) return;
-                    event.setCancelled(true);
-                });
-            }
-        }
-
-        @EventHandler(priority = EventPriority.LOWEST)
-        @SuppressWarnings("unchecked")
-        public void onInventoryClick(@NotNull InventoryClickEvent event) {
-            HumanEntity whoClicked = InventoryUtil.getPlayer(event);
-            if (!(whoClicked instanceof Player player)) return;
-            ItemStack itemStack = event.getCurrentItem();
-
-            if (!hasInventory(player.getUniqueId())) return;
-            RyseInventory mainInventory = inventories.get(player.getUniqueId());
-
-            if (event.getClickedInventory() == null) {
-                if (mainInventory.getCloseReasons().contains(CloseReason.CLICK_OUTSIDE))
-                    player.closeInventory();
-                return;
-            }
-
-            EventCreator<InventoryClickEvent> customEvent = (EventCreator<InventoryClickEvent>) mainInventory.getEvent(InventoryClickEvent.class);
-            if (customEvent != null) {
-                morePaperLib.scheduling().globalRegionalScheduler().runDelayed(() -> customEvent.accept(event), 2L);
-            }
-
-            List<DisabledInventoryClick> list = mainInventory.getIgnoreClickEvent();
-
-            InventoryAction action = event.getAction();
-            Inventory clickedInventory = event.getClickedInventory();
-            Inventory bottomInventory = InventoryUtil.getPlayerBottomInventory(player);
-            Inventory topInventory = InventoryUtil.getPlayerTopInventory(player);
-            int slot = event.getSlot();
-            ClickType clickType = event.getClick();
-            InventoryContents contents = content.get(player.getUniqueId());
-
-            if (clickedInventory == bottomInventory) {
-                if (!list.contains(DisabledInventoryClick.BOTTOM) && !list.contains(DisabledInventoryClick.BOTH)) {
-                    event.setCancelled(true);
-                    return;
-                }
-
-                if (mainInventory.getCloseReasons().contains(CloseReason.CLICK_BOTTOM_INVENTORY)) {
-                    mainInventory.close(player);
-                    return;
-                }
-
-                if (action == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
-                    if (!mainInventory.getEnabledActions().contains(Action.MOVE_TO_OTHER_INVENTORY)) {
-                        event.setCancelled(true);
-                        return;
-                    }
-
-                    int[] data = checkForExistingItem(topInventory, itemStack, mainInventory);
-                    int targetSlot = data[0];
-                    int targetAmount = data[1];
-
-                    Optional<IntelligentItem> itemOptional = contents.get(targetSlot);
-
-                    if (cancelEventIfItemHasConsumer(event, mainInventory, targetSlot, itemOptional)) return;
-
-                    if (adjustItemStackAmount(topInventory, event, mainInventory, contents, targetSlot, targetAmount))
-                        return;
-
-                    event.setCancelled(true);
-                    adjustItemStackAmountToMaxStackSize(itemStack, mainInventory, topInventory, contents, targetSlot, targetAmount);
-                    return;
-                }
-
-                if (action == InventoryAction.NOTHING)
-                    event.setCancelled(true);
-
-                return;
-            }
-
-            if (clickedInventory == topInventory) {
-                if (!hasContents(player.getUniqueId()))
-                    return;
-                if (slot < 0 || (mainInventory.getInventoryOpenerType() == InventoryOpenerType.CHEST && slot > mainInventory.size(contents))) {
-                    return;
-                }
-
-                SlideAnimation animation = mainInventory.getSlideAnimator();
-
-                if (animation != null && mainInventory.activeSlideAnimatorTasks() > 0 && animation.isBlockClickEvent()) {
-                    event.setCancelled(true);
-                    return;
-                }
-
-                if (!list.contains(DisabledInventoryClick.TOP) && !list.contains(DisabledInventoryClick.BOTH)) {
-                    if (event.getClick() == ClickType.DOUBLE_CLICK
-                            && !mainInventory.getEnabledActions().contains(Action.DOUBLE_CLICK)) {
-                        event.setCancelled(true);
-                        return;
-                    }
-                    if (!mainInventory.getIgnoredSlots().containsKey(slot))
-                        event.setCancelled(true);
-                }
-
-                if (mainInventory.getIgnoredSlots().containsKey(slot)) {
-                    Consumer<InventoryClickEvent> consumer = mainInventory.getIgnoredSlots().get(slot);
-
-                    if (consumer != null) {
-                        consumer.accept(event);
-
-                        if (event.isCancelled())
-                            return;
-                    }
-
-                    modifyItemStackAmountViaCursor(event, itemStack, mainInventory, slot, clickType, contents);
-                    subtractItemStackAmountWhenRightClick(event, itemStack, mainInventory, slot, clickType, contents);
-                }
-
-                Optional<IntelligentItem> optional = contents.get(slot);
-
-                if (!optional.isPresent() && mainInventory.getCloseReasons().contains(CloseReason.CLICK_EMPTY_SLOT)) {
-                    event.setCancelled(true);
-                    mainInventory.close(player);
-                    return;
-                }
-
-                optional.ifPresent(item -> {
-                    if (item.getDefaultConsumer() == null) {
-                        event.setCancelled(false);
-                        return;
-                    }
-
-                    if (list.contains(DisabledInventoryClick.TOP) || list.contains(DisabledInventoryClick.BOTH)) {
-                        event.setCancelled(false);
-                        return;
-                    }
-
-                    if (item.getDelayTask() != null && item.getDelayTask().getExecutionState() == ScheduledTask.ExecutionState.RUNNING)
-                        return;
-
-                    int delay = item.getDelay();
-                    if (morePaperLib.scheduling().isUsingFolia() && delay <= 0) {
-                        delay = 1;
-                    }
-                    item.setDelayTask(morePaperLib.scheduling().globalRegionalScheduler().runDelayed(() -> {
-                        if (!item.isCanClick()) {
-                            item.getError().cantClick(player, item);
-                            return;
-                        }
-                        item.setDelayTask(null);
-                        item.getDefaultConsumer().accept(event);
-                        player.updateInventory();
-                    }, delay));
-                });
-            }
-        }
-
-        @EventHandler(priority = EventPriority.LOWEST)
-        @SuppressWarnings("unchecked")
-        public void onInventoryDrag(@NotNull InventoryDragEvent event) {
-            HumanEntity whoClicked = InventoryUtil.getPlayer(event);
-            if (!(whoClicked instanceof Player player)) return;
-            if (!hasInventory(player.getUniqueId())) return;
-
-            Inventory topInventory = player.getOpenInventory().getTopInventory();
-            RyseInventory mainInventory = inventories.get(player.getUniqueId());
-
-            EventCreator<InventoryDragEvent> customEvent = (EventCreator<InventoryDragEvent>) mainInventory.getEvent(InventoryDragEvent.class);
-            if (customEvent != null) {
-                customEvent.accept(event);
-                return;
-            }
-
-            if (mainInventory.getDisabledEvents().contains(DisabledEvents.INVENTORY_DRAG)) return;
-
-            event.getRawSlots().forEach(integer -> {
-                if (integer >= topInventory.getSize()) return;
-                event.setCancelled(true);
-            });
-        }
-
-        @EventHandler(priority = EventPriority.LOWEST)
-        @SuppressWarnings("unchecked")
-        public void onInventoryClose(@NotNull InventoryCloseEvent event) {
-            if (!(event.getPlayer() instanceof Player)) return;
-            Player player = (Player) event.getPlayer();
-            if (!hasInventory(player.getUniqueId()))
-                return;
-
-            RyseInventory mainInventory = inventories.get(player.getUniqueId());
-
-            if (!mainInventory.isCloseAble()) {
-                morePaperLib.scheduling().globalRegionalScheduler().run(() -> mainInventory.open(player));
-                return;
-            }
-
-            EventCreator<InventoryCloseEvent> customEvent = (EventCreator<InventoryCloseEvent>) mainInventory.getEvent(InventoryCloseEvent.class);
-            if (customEvent != null) {
-                customEvent.accept(event);
-                mainInventory.clearData(player);
-                return;
-            }
-
-            mainInventory.getProvider().close(player, mainInventory);
-            mainInventory.close(player);
-        }
-
-        @EventHandler(priority = EventPriority.LOWEST)
-        @SuppressWarnings("unchecked")
-        public void onPlayerQuit(@NotNull PlayerQuitEvent event) {
-            Player player = event.getPlayer();
-            if (!hasInventory(player.getUniqueId()))
-                return;
-
-            RyseInventory mainInventory = inventories.get(player.getUniqueId());
-
-            EventCreator<PlayerQuitEvent> customEvent = (EventCreator<PlayerQuitEvent>) mainInventory.getEvent(PlayerQuitEvent.class);
-            if (customEvent == null) return;
-
-            customEvent.accept(event);
-        }
-
-        @EventHandler(priority = EventPriority.LOWEST)
-        @SuppressWarnings("unchecked")
-        public void onRyseInventoryClose(@NotNull RyseInventoryCloseEvent event) {
-            Player player = event.getPlayer();
-            if (!hasInventory(player.getUniqueId()))
-                return;
-
-            RyseInventory mainInventory = inventories.get(player.getUniqueId());
-
-            EventCreator<RyseInventoryCloseEvent> customEvent = (EventCreator<RyseInventoryCloseEvent>) mainInventory.getEvent(RyseInventoryCloseEvent.class);
-            if (customEvent == null) return;
-
-            customEvent.accept(event);
-        }
-
-        @EventHandler(priority = EventPriority.LOWEST)
-        @SuppressWarnings("unchecked")
-        public void onRyseInventoryOpen(@NotNull RyseInventoryOpenEvent event) {
-            Player player = event.getPlayer();
-            if (!hasInventory(player.getUniqueId()))
-                return;
-
-            RyseInventory mainInventory = inventories.get(player.getUniqueId());
-
-            EventCreator<RyseInventoryOpenEvent> customEvent = (EventCreator<RyseInventoryOpenEvent>) mainInventory.getEvent(RyseInventoryOpenEvent.class);
-            if (customEvent == null) return;
-
-            customEvent.accept(event);
-        }
-
-        @EventHandler(priority = EventPriority.LOWEST)
-        @SuppressWarnings("unchecked")
-        public void onRyseInventoryPreClose(@NotNull RyseInventoryPreCloseEvent event) {
-            Player player = event.getPlayer();
-            if (!hasInventory(player.getUniqueId()))
-                return;
-
-            RyseInventory mainInventory = inventories.get(player.getUniqueId());
-
-            EventCreator<RyseInventoryPreCloseEvent> customEvent = (EventCreator<RyseInventoryPreCloseEvent>) mainInventory.getEvent(RyseInventoryPreCloseEvent.class);
-            if (customEvent == null) return;
-
-            customEvent.accept(event);
-        }
-
-        @EventHandler(priority = EventPriority.LOWEST)
-        @SuppressWarnings("unchecked")
-        public void onRyseInventoryPreOpen(@NotNull RyseInventoryPreOpenEvent event) {
-            Player player = event.getPlayer();
-            if (!hasInventory(player.getUniqueId()))
-                return;
-
-            RyseInventory mainInventory = inventories.get(player.getUniqueId());
-
-            EventCreator<RyseInventoryPreOpenEvent> customEvent = (EventCreator<RyseInventoryPreOpenEvent>) mainInventory.getEvent(RyseInventoryPreOpenEvent.class);
-            if (customEvent == null) return;
-
-            customEvent.accept(event);
-        }
-
-        @EventHandler(priority = EventPriority.LOWEST)
-        @SuppressWarnings("unchecked")
-        public void onRyseInventoryTitleChange(@NotNull RyseInventoryTitleChangeEvent event) {
-            Player player = event.getPlayer();
-            if (!hasInventory(player.getUniqueId()))
-                return;
-
-            RyseInventory mainInventory = inventories.get(player.getUniqueId());
-            EventCreator<RyseInventoryTitleChangeEvent> customEvent = (EventCreator<RyseInventoryTitleChangeEvent>) mainInventory.getEvent(RyseInventoryTitleChangeEvent.class);
-            if (customEvent == null) return;
-
-            customEvent.accept(event);
-        }
-
-        @EventHandler(priority = EventPriority.LOWEST)
-        public void onPluginDisable(@NotNull PluginDisableEvent event) {
-            Plugin disabledPlugin = event.getPlugin();
-
-            if (disabledPlugin != plugin) return;
-
-
-            Bukkit.getOnlinePlayers().forEach(player -> {
-                if (!hasInventory(player.getUniqueId())) return;
-
-                RyseInventory inventory = inventories.get(player.getUniqueId());
-                inventory.close(player);
-            });
-
-        }
-
-        /**
-         * This function checks if an item exists in an inventory, and if it does, it returns the slot number and the
-         * amount of the item in that slot.
-         *
-         * @param topInventory The inventory to check for the item in.
-         * @param itemStack    The item you want to check for.
-         * @return An array of integers.
-         */
-        private int @NotNull [] checkForExistingItem(@NotNull Inventory topInventory,
-                                                     @Nullable ItemStack itemStack,
-                                                     @NotNull RyseInventory mainInventory) {
-            int[] data = new int[2];
-            data[0] = -1;
-            for (int i = 0; i < topInventory.getSize(); i++) {
-                ItemStack inventoryItem = topInventory.getItem(i);
-                if (!mainInventory.getIgnoredSlots().containsKey(i)) continue;
-
-                if (inventoryItem == null || inventoryItem.getType() == Material.AIR) {
-                    data[0] = i;
-                    break;
-                }
-
-                if (inventoryItem.isSimilar(itemStack) && inventoryItem.getAmount() < inventoryItem.getMaxStackSize()) {
-                    data[0] = i;
-                    data[1] = inventoryItem.getAmount();
-                    break;
-                }
-            }
-            return data;
-        }
-
-        /**
-         * If the item in the target slot has a consumer, cancel the event
-         *
-         * @param event         The InventoryClickEvent that was called.
-         * @param mainInventory The inventory that the player is currently viewing.
-         * @param targetSlot    The slot that the player is trying to click on.
-         * @param itemOptional  The item that is being clicked on.
-         * @return A boolean value.
-         */
-        private boolean cancelEventIfItemHasConsumer(@NotNull InventoryClickEvent event,
-                                                     @NotNull RyseInventory mainInventory,
-                                                     int targetSlot,
-                                                     Optional<IntelligentItem> itemOptional) {
-            if (!mainInventory.getIgnoredSlots().containsKey(targetSlot)) {
-                if (itemOptional.isPresent() && itemOptional.get().getDefaultConsumer() != null) return true;
-
-                event.setCancelled(true);
-                return true;
-            }
-            return false;
-        }
-
-        /**
-         * If the amount of the item in the target slot plus the amount of the item in the cursor slot is less than or
-         * equal to the max stack size of the item, then set the amount of the item in the target slot to the amount of the
-         * item in the target slot plus the amount of the item in the cursor slot
-         *
-         * @param mainInventory The RyseInventory instance
-         * @param contents      The InventoryContents object that contains all the information about the inventory.
-         * @param targetSlot    The slot in the inventory that the item is being moved to.
-         * @param targetAmount  The amount of the item that you want to add to the target slot.
-         * @return A boolean value.
-         */
-        private boolean adjustItemStackAmount(@NotNull Inventory topInventory,
-                                              InventoryClickEvent event,
-                                              RyseInventory mainInventory,
-                                              InventoryContents contents,
-                                              int targetSlot, int targetAmount) {
-            ItemStack itemStack = event.getCurrentItem();
-            if (itemStack.getAmount() + targetAmount <= itemStack.getMaxStackSize()) {
-                event.setCancelled(true);
-
-                ItemStack topItem = topInventory.getItem(targetSlot);
-
-                if (topItem != null && topItem.getType() != Material.AIR)
-                    if (!itemStack.isSimilar(topInventory.getItem(targetSlot)))
-                        return true;
-
-
-                event.setCurrentItem(null);
-
-                ItemStack finalItemStack = itemStack.clone();
-                finalItemStack.setAmount(itemStack.getAmount() + targetAmount);
-
-                topInventory.setItem(targetSlot, finalItemStack);
-
-                if (!mainInventory.isIgnoreManualItems()) {
-                    contents.pagination().setItem(
-                            targetSlot,
-                            contents.pagination().page() - 1,
-                            IntelligentItem.ignored(finalItemStack),
-                            true);
-                }
-                return true;
-            }
-            return false;
-        }
-
-
-        /**
-         * If the item stack is greater than the max stack size, set the item stack to the max stack size and subtract the
-         * max stack size from the original item stack
-         *
-         * @param itemStack     The itemstack that is being moved
-         * @param mainInventory The RyseInventory instance
-         * @param topInventory  The inventory that the player is currently viewing.
-         * @param contents      The InventoryContents object that is passed to the InventoryListener.
-         * @param targetSlot    The slot in the top inventory that the item is being moved to.
-         * @param targetAmount  The amount of items to be moved to the target slot.
-         */
-        private void adjustItemStackAmountToMaxStackSize(@NotNull ItemStack itemStack,
-                                                         @NotNull RyseInventory mainInventory,
-                                                         @NotNull Inventory topInventory,
-                                                         InventoryContents contents,
-                                                         int targetSlot, int targetAmount) {
-            ItemStack toSet = new ItemStack(itemStack.getType(), itemStack.getMaxStackSize());
-            topInventory.setItem(targetSlot, toSet);
-
-            if (!mainInventory.isIgnoreManualItems()) {
-                contents.pagination().setItem(
-                        targetSlot,
-                        contents.pagination().page() - 1,
-                        IntelligentItem.ignored(toSet),
-                        true);
-            }
-
-            itemStack.setAmount(itemStack.getAmount() - targetAmount);
-        }
-
-
-        /**
-         * If the cursor is not empty, and the item in the slot is similar to the cursor, then set the amount of the item
-         * in the slot to the amount of the item in the slot plus the amount of the cursor
-         *
-         * @param event         The InventoryClickEvent that was fired.
-         * @param itemStack     The itemstack in the slot that was clicked.
-         * @param mainInventory The inventory that the player is currently viewing.
-         * @param slot          The slot that was clicked
-         * @param clickType     The type of click that was performed.
-         * @param contents      The InventoryContents object that contains all the information about the inventory.
-         */
-        private void modifyItemStackAmountViaCursor(@NotNull InventoryClickEvent event,
-                                                    ItemStack itemStack,
-                                                    RyseInventory mainInventory,
-                                                    int slot,
-                                                    ClickType clickType,
-                                                    InventoryContents contents) {
-            if (event.getCursor() == null || event.getCursor().getType() == Material.AIR) return;
-
-            ItemStack cursor = event.getCursor().clone();
-            if (clickType == ClickType.RIGHT) {
-                cursor.setAmount(itemStack != null && itemStack.isSimilar(cursor)
-                        ? itemStack.getAmount() + 1
-                        : 1);
-            } else {
-                cursor.setAmount(itemStack != null && itemStack.isSimilar(cursor)
-                        ? itemStack.getAmount() + cursor.getAmount()
-                        : cursor.getAmount());
-            }
-
-            if (mainInventory.isIgnoreManualItems())
-                return;
-
-            contents.pagination().setItem(
-                    slot,
-                    contents.pagination().page() - 1,
-                    IntelligentItem.ignored(cursor),
-                    true);
-        }
-
-
-        /**
-         * When the player right clicks on an item, the item's amount is halved. Otherwise the item is removed.
-         *
-         * @param event         The InventoryClickEvent that was called.
-         * @param itemStack     The itemstack that was clicked
-         * @param mainInventory The inventory that is being opened.
-         * @param slot          The slot that was clicked
-         * @param clickType     The type of click that was performed.
-         * @param contents      The InventoryContents object that contains all the information about the inventory.
-         */
-        private void subtractItemStackAmountWhenRightClick(@NotNull InventoryClickEvent event,
-                                                           ItemStack itemStack,
-                                                           RyseInventory mainInventory,
-                                                           int slot,
-                                                           ClickType clickType,
-                                                           InventoryContents contents) {
-            if (event.getCursor() != null && event.getCursor().getType() != Material.AIR)
-                return;
-
-            if (clickType == ClickType.RIGHT) {
-                if (mainInventory.isIgnoreManualItems()) return;
-                if (itemStack == null) return;
-
-                ItemStack finalItemStack = itemStack.clone();
-                finalItemStack.setAmount(itemStack.getAmount() / 2);
-                contents.pagination().setItem(
-                        slot,
-                        contents.pagination().page() - 1,
-                        IntelligentItem.ignored(finalItemStack),
-                        true);
-                return;
-            }
-
-            if (itemStack != null && itemStack.getType() != Material.AIR)
-                contents.pagination().remove(slot);
-        }
     }
 }

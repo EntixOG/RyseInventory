@@ -166,7 +166,7 @@ public class InventoryContents {
                     IntelligentItem intelligentItem = data.getItem();
 
                     Optional<Integer> optional = getPositionOfItem(intelligentItem);
-                    if (!optional.isPresent()) return;
+                    if (optional.isEmpty()) return;
 
                     intelligentItem.getItemStack().setType(newMaterial);
                     update(optional.get(), intelligentItem.update(intelligentItem));
@@ -188,7 +188,7 @@ public class InventoryContents {
                     IntelligentItem intelligentItem = data.getItem();
 
                     Optional<Integer> optional = getPositionOfItem(intelligentItem);
-                    if (!optional.isPresent()) return;
+                    if (optional.isEmpty()) return;
 
                     update(optional.get(), intelligentItem.update(newItemStack));
                 });
@@ -209,7 +209,7 @@ public class InventoryContents {
                     IntelligentItem intelligentItem = data.getItem();
 
                     Optional<Integer> optional = getPositionOfItem(intelligentItem);
-                    if (!optional.isPresent()) return;
+                    if (optional.isEmpty()) return;
 
                     update(optional.get(), intelligentItem.update(newIntelligentItem));
                 });
@@ -263,7 +263,7 @@ public class InventoryContents {
                     IntelligentItem intelligentItem = data.getItem();
 
                     Optional<Integer> optional = getPositionOfItem(intelligentItem);
-                    if (!optional.isPresent()) return;
+                    if (optional.isEmpty()) return;
 
                     intelligentItem.getItemStack().setType(newMaterial);
                     replaced.set(update(optional.get(), intelligentItem.update(intelligentItem)));
@@ -290,7 +290,7 @@ public class InventoryContents {
                     IntelligentItem intelligentItem = data.getItem();
 
                     Optional<Integer> optional = getPositionOfItem(intelligentItem);
-                    if (!optional.isPresent()) return;
+                    if (optional.isEmpty()) return;
 
                     replaced.set(update(optional.get(), intelligentItem.update(newItemStack)));
                 });
@@ -316,7 +316,7 @@ public class InventoryContents {
                     IntelligentItem intelligentItem = data.getItem();
 
                     Optional<Integer> optional = getPositionOfItem(intelligentItem);
-                    if (!optional.isPresent()) return;
+                    if (optional.isEmpty()) return;
 
                     replaced.set(update(optional.get(), intelligentItem.update(newIntelligentItem)));
                 });
@@ -436,9 +436,6 @@ public class InventoryContents {
 
         if (finalTime != -1) {
             AtomicBoolean success = new AtomicBoolean(false);
-            /*Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                success.set(updateItem(slots, itemStack));
-            }, finalTime);*/
             inventory.getManager().getMorePaperLib().scheduling().globalRegionalScheduler().runDelayed(() -> success.set(update(slots, itemStack)), finalTime);
             return success.get();
         }
@@ -478,9 +475,6 @@ public class InventoryContents {
 
         if (finalTime != -1) {
             AtomicBoolean success = new AtomicBoolean(false);
-            /*Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                success.set(updateOrSetItem(slot, intelligentItem));
-            }, finalTime);*/
             inventory.getManager().getMorePaperLib().scheduling().globalRegionalScheduler().runDelayed(() -> success.set(updateOrSetItem(slot, intelligentItem)), finalTime);
             return success.get();
         }
@@ -740,7 +734,7 @@ public class InventoryContents {
             this.pagination.remove(slot);
 
             Optional<Inventory> inventoryOptional = this.inventory.inventoryBasedOnOption(this.player.getUniqueId());
-            if (!inventoryOptional.isPresent())
+            if (inventoryOptional.isEmpty())
                 continue;
 
             inventoryOptional.get().setItem(slot, null);
@@ -770,7 +764,7 @@ public class InventoryContents {
     public void removeFirst(@NotNull ItemStack item) {
         for (int i = 0; i < this.inventory.size(this); i++) {
             Optional<IntelligentItem> optional = get(i);
-            if (!optional.isPresent()) continue;
+            if (optional.isEmpty()) continue;
 
             ItemStack itemStack = optional.get().getItemStack();
             if (itemStack == null || itemStack.getType().equals(Material.AIR)) continue;
@@ -779,7 +773,7 @@ public class InventoryContents {
             removeSlot(i);
 
             Optional<Inventory> inventoryOptional = this.inventory.inventoryBasedOnOption(this.player.getUniqueId());
-            if (!inventoryOptional.isPresent()) break;
+            if (inventoryOptional.isEmpty()) break;
             inventoryOptional.get().setItem(i, null);
             optional.get().clearConsumer();
             break;
@@ -794,7 +788,7 @@ public class InventoryContents {
     public void removeFirst(@NotNull Material material) {
         for (int i = 0; i < this.inventory.size(this); i++) {
             Optional<IntelligentItem> optional = get(i);
-            if (!optional.isPresent()) continue;
+            if (optional.isEmpty()) continue;
 
             ItemStack itemStack = optional.get().getItemStack();
             if (itemStack == null || itemStack.getType().equals(Material.AIR)) continue;
@@ -803,7 +797,7 @@ public class InventoryContents {
             removeSlot(i);
 
             Optional<Inventory> inventoryOptional = this.inventory.inventoryBasedOnOption(this.player.getUniqueId());
-            if (!inventoryOptional.isPresent()) break;
+            if (inventoryOptional.isEmpty()) break;
             inventoryOptional.get().setItem(i, null);
             optional.get().clearConsumer();
             break;
@@ -826,7 +820,7 @@ public class InventoryContents {
 
         for (int i = 0; i < this.inventory.size(this); i++) {
             Optional<IntelligentItem> optional = get(i);
-            if (!optional.isPresent()) continue;
+            if (optional.isEmpty()) continue;
 
             ItemStack itemStack = optional.get().getItemStack();
             if (itemStack == null || itemStack.getType().equals(Material.AIR)) continue;
@@ -835,11 +829,11 @@ public class InventoryContents {
             Optional<Inventory> inventoryOptional = this.inventory.inventoryBasedOnOption(this.player.getUniqueId());
             if (itemStack.getAmount() - amount < 1) {
                 removeSlot(i);
-                if (!inventoryOptional.isPresent()) continue;
+                if (inventoryOptional.isEmpty()) continue;
                 inventoryOptional.get().setItem(i, null);
                 continue;
             }
-            if (!inventoryOptional.isPresent()) continue;
+            if (inventoryOptional.isEmpty()) continue;
             itemStack.setAmount(itemStack.getAmount() - amount);
             inventoryOptional.get().setItem(i, itemStack);
             break;
@@ -854,7 +848,7 @@ public class InventoryContents {
     public void removeAll(@NotNull ItemStack item) {
         for (int i = 0; i < this.inventory.size(this); i++) {
             Optional<IntelligentItem> optional = get(i);
-            if (!optional.isPresent()) continue;
+            if (optional.isEmpty()) continue;
 
             ItemStack itemStack = optional.get().getItemStack();
             if (itemStack == null || itemStack.getType().equals(Material.AIR)) continue;
@@ -863,7 +857,7 @@ public class InventoryContents {
             removeSlot(i);
 
             Optional<Inventory> inventoryOptional = this.inventory.inventoryBasedOnOption(this.player.getUniqueId());
-            if (!inventoryOptional.isPresent()) break;
+            if (inventoryOptional.isEmpty()) break;
             inventoryOptional.get().setItem(i, null);
             optional.get().clearConsumer();
         }
@@ -883,7 +877,7 @@ public class InventoryContents {
 
         for (int i = 0; i < this.inventory.size(this); i++) {
             Optional<IntelligentItem> optional = get(i);
-            if (!optional.isPresent()) continue;
+            if (optional.isEmpty()) continue;
 
             ItemStack itemStack = optional.get().getItemStack();
             if (itemStack == null || itemStack.getType().equals(Material.AIR)) continue;
@@ -892,12 +886,12 @@ public class InventoryContents {
             Optional<Inventory> inventoryOptional = this.inventory.inventoryBasedOnOption(this.player.getUniqueId());
             if (itemStack.getAmount() - amount < 1) {
                 removeSlot(i);
-                if (!inventoryOptional.isPresent()) continue;
+                if (inventoryOptional.isEmpty()) continue;
                 inventoryOptional.get().setItem(i, null);
                 optional.get().clearConsumer();
                 continue;
             }
-            if (!inventoryOptional.isPresent()) continue;
+            if (inventoryOptional.isEmpty()) continue;
             itemStack.setAmount(itemStack.getAmount() - amount);
             inventoryOptional.get().setItem(i, itemStack);
         }
@@ -909,7 +903,7 @@ public class InventoryContents {
     public void removeFirst() {
         for (int i = 0; i < this.inventory.size(this); i++) {
             Optional<IntelligentItem> optional = get(i);
-            if (!optional.isPresent()) continue;
+            if (optional.isEmpty()) continue;
 
             ItemStack itemStack = optional.get().getItemStack();
             if (itemStack == null || itemStack.getType().equals(Material.AIR)) continue;
@@ -917,7 +911,7 @@ public class InventoryContents {
             removeSlot(i);
 
             Optional<Inventory> inventoryOptional = this.inventory.inventoryBasedOnOption(this.player.getUniqueId());
-            if (!inventoryOptional.isPresent()) break;
+            if (inventoryOptional.isEmpty()) break;
             inventoryOptional.get().setItem(i, null);
             optional.get().clearConsumer();
             break;
@@ -936,7 +930,7 @@ public class InventoryContents {
 
         for (int i = 0; i < this.inventory.size(this); i++) {
             Optional<IntelligentItem> optional = get(i);
-            if (!optional.isPresent()) continue;
+            if (optional.isEmpty()) continue;
 
             ItemStack itemStack = optional.get().getItemStack();
             if (itemStack == null || itemStack.getType().equals(Material.AIR)) continue;
@@ -944,12 +938,12 @@ public class InventoryContents {
             Optional<Inventory> inventoryOptional = this.inventory.inventoryBasedOnOption(this.player.getUniqueId());
             if (itemStack.getAmount() - amount < 1) {
                 removeSlot(i);
-                if (!inventoryOptional.isPresent()) break;
+                if (inventoryOptional.isEmpty()) break;
                 inventoryOptional.get().setItem(i, null);
                 optional.get().clearConsumer();
                 break;
             }
-            if (!inventoryOptional.isPresent()) break;
+            if (inventoryOptional.isEmpty()) break;
             itemStack.setAmount(itemStack.getAmount() - amount);
             inventoryOptional.get().setItem(i, itemStack);
             break;
@@ -1285,18 +1279,13 @@ public class InventoryContents {
      * @return The slot number of the corner.
      */
     public int findCorner(@NotNull CornerType type) {
-        switch (type) {
-            case TOP_LEFT:
-                return 0;
-            case TOP_RIGHT:
-                return 8;
-            case BOTTOM_LEFT:
-                return this.inventory.size(this) - 9;
-            case BOTTOM_RIGHT:
-                return this.inventory.size(this) - 1;
-            default:
-                return -1;
-        }
+        return switch (type) {
+            case TOP_LEFT -> 0;
+            case TOP_RIGHT -> 8;
+            case BOTTOM_LEFT -> this.inventory.size(this) - 9;
+            case BOTTOM_RIGHT -> this.inventory.size(this) - 1;
+            default -> -1;
+        };
     }
 
     /**
@@ -1670,7 +1659,7 @@ public class InventoryContents {
     public boolean add(@NotNull IntelligentItem item) {
         Optional<Integer> optional = firstEmpty();
 
-        if (!optional.isPresent()) return false;
+        if (optional.isEmpty()) return false;
 
         int slot = optional.get();
         this.pagination.setItem(slot, item);
@@ -2611,7 +2600,7 @@ public class InventoryContents {
     public @NotNull Optional<Integer> getPositionOfItem(@NotNull ItemStack itemStack) {
         for (int i = 0; i < this.inventory.size(this); i++) {
             Optional<IntelligentItem> item = get(i);
-            if (!item.isPresent()) continue;
+            if (item.isEmpty()) continue;
             if (!item.get().getItemStack().isSimilar(itemStack)) continue;
 
             return Optional.of(i);
@@ -2640,7 +2629,7 @@ public class InventoryContents {
     public @NotNull Optional<Pair<Integer, Integer>> getCoordinationOfItem(@NotNull ItemStack itemStack) {
         for (int i = 0; i < this.inventory.size(this); i++) {
             Optional<IntelligentItem> item = get(i);
-            if (!item.isPresent()) continue;
+            if (item.isEmpty()) continue;
             if (!item.get().getItemStack().isSimilar(itemStack)) continue;
 
             return Optional.of(Pair.of(i / 9, i % 9));
@@ -2742,7 +2731,7 @@ public class InventoryContents {
 
         add(itemToAdd);
         Optional<Inventory> inventoryOptional = this.inventory.inventoryBasedOnOption(this.player.getUniqueId());
-        if (!inventoryOptional.isPresent())
+        if (inventoryOptional.isEmpty())
             return Optional.of(itemToAdd);
 
         inventoryOptional.get().setItem(slot, itemToAdd.getItemStack());
@@ -2777,7 +2766,7 @@ public class InventoryContents {
 
         set(slot, itemToSet);
         Optional<Inventory> inventoryOptional = this.inventory.inventoryBasedOnOption(this.player.getUniqueId());
-        if (!inventoryOptional.isPresent())
+        if (inventoryOptional.isEmpty())
             return Optional.of(itemToSet);
 
         inventoryOptional.get().setItem(slot, itemToSet.getItemStack());
@@ -2926,7 +2915,7 @@ public class InventoryContents {
             throw new IllegalArgumentException(Utils.replace(PlaceHolderConstants.INVALID_SLOT, "%temp%", this.inventory.size(this)));
 
         Optional<IntelligentItem> itemOptional = get(slot);
-        if (!itemOptional.isPresent()) return false;
+        if (itemOptional.isEmpty()) return false;
 
         IntelligentItem item = itemOptional.get();
         ItemStack itemStack = item.getItemStack();
@@ -2987,7 +2976,7 @@ public class InventoryContents {
             throw new IllegalArgumentException(Utils.replace(PlaceHolderConstants.INVALID_SLOT, "%temp%", this.inventory.size(this)));
 
         Optional<IntelligentItem> itemOptional = get(slot);
-        if (!itemOptional.isPresent()) return false;
+        if (itemOptional.isEmpty()) return false;
 
         IntelligentItem item = itemOptional.get();
         ItemStack itemStack = item.getItemStack();
@@ -2999,6 +2988,8 @@ public class InventoryContents {
 
         ItemMeta itemMeta = itemStack.getItemMeta();
         List<String> lore = itemMeta.getLore();
+
+        if (lore == null) throw new IllegalArgumentException("ItemStack has no lore, lore is null");
 
         if (index >= lore.size())
             throw new IllegalArgumentException("The index must not be larger than " + lore.size());
@@ -3107,7 +3098,7 @@ public class InventoryContents {
             throw new IllegalArgumentException(Utils.replace(PlaceHolderConstants.INVALID_SLOT, "%temp%", this.inventory.size(this)));
 
         Optional<IntelligentItem> itemOptional = get(slot);
-        if (!itemOptional.isPresent()) return false;
+        if (itemOptional.isEmpty()) return false;
 
         IntelligentItem item = itemOptional.get();
         ItemStack itemStack = item.getItemStack();
@@ -3132,7 +3123,7 @@ public class InventoryContents {
             throw new IllegalArgumentException(Utils.replace(PlaceHolderConstants.INVALID_SLOT, "%temp%", this.inventory.size(this)));
 
         Optional<IntelligentItem> itemOptional = get(slot);
-        if (!itemOptional.isPresent()) return false;
+        if (itemOptional.isEmpty()) return false;
 
         IntelligentItem item = itemOptional.get();
         IntelligentItem newItem = item.update(itemStack);
@@ -3183,7 +3174,7 @@ public class InventoryContents {
             throw new IllegalArgumentException(Utils.replace(PlaceHolderConstants.INVALID_SLOT, "%temp%", this.inventory.size(this)));
 
         Optional<IntelligentItem> itemOptional = get(slot);
-        if (!itemOptional.isPresent()) return false;
+        if (itemOptional.isEmpty()) return false;
 
         IntelligentItem item = itemOptional.get();
         ItemStack itemStack = item.getItemStack();
@@ -3330,7 +3321,7 @@ public class InventoryContents {
             throw new IllegalArgumentException(Utils.replace(PlaceHolderConstants.INVALID_SLOT, "%temp%", this.inventory.size(this)));
 
         Optional<IntelligentItem> itemOptional = get(slot);
-        if (!itemOptional.isPresent()) return false;
+        if (itemOptional.isEmpty()) return false;
 
         IntelligentItem item = itemOptional.get();
         IntelligentItem newItem = item.update(intelligentItem);
@@ -3539,7 +3530,7 @@ public class InventoryContents {
             throw new IllegalArgumentException("The newSlot must not be larger than 53.");
 
         Optional<IntelligentItem> itemOptional = get(itemSlot);
-        if (!itemOptional.isPresent()) return false;
+        if (itemOptional.isEmpty()) return false;
 
         removeItemWithConsumer(itemSlot);
 
@@ -3739,7 +3730,7 @@ public class InventoryContents {
         set(slot, intelligentItem);
 
         Optional<Inventory> inventoryOptional = this.inventory.inventoryBasedOnOption(this.player.getUniqueId());
-        if (!inventoryOptional.isPresent())
+        if (inventoryOptional.isEmpty())
             return false;
 
         inventoryOptional.get().setItem(slot, intelligentItem.getItemStack());

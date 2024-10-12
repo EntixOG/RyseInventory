@@ -347,12 +347,11 @@ public class IntelligentItem {
 
     @Contract(value = "null -> false", pure = true)
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof IntelligentItem)) return false;
-        IntelligentItem that = (IntelligentItem) o;
-        return itemStack.isSimilar(that.itemStack)
-                && Objects.equals(id, that.id);
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof IntelligentItem intelligentItem)) return false;
+        return itemStack.isSimilar(intelligentItem.itemStack)
+                && Objects.equals(id, intelligentItem.id);
     }
 
     @Override
