@@ -343,22 +343,6 @@ public class InventoryManager {
             savedInventory.getProvider().update(player, content.get(player.getUniqueId()));
             this.updaterTask.put(player.getUniqueId(), scheduledTask);
         }, delay, inventory.getPeriod());
-        /*BukkitTask task = new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!hasInventory(player.getUniqueId())) {
-                    cancel();
-                    return;
-                }
-                RyseInventory savedInventory = inventories.get(player.getUniqueId());
-                if (savedInventory != inventory) {
-                    cancel();
-                    return;
-                }
-                savedInventory.getProvider().update(player, content.get(player.getUniqueId()));
-            }
-        }.runTaskTimer(this.plugin, inventory.getDelay(), inventory.getPeriod());
-        this.updaterTask.put(player.getUniqueId(), task);*/
     }
 
     /**
@@ -484,7 +468,6 @@ public class InventoryManager {
 
             EventCreator<InventoryClickEvent> customEvent = (EventCreator<InventoryClickEvent>) mainInventory.getEvent(InventoryClickEvent.class);
             if (customEvent != null) {
-                //Bukkit.getScheduler().runTaskLater(plugin, () -> customEvent.accept(event), 2L);
                 morePaperLib.scheduling().globalRegionalScheduler().runDelayed(() -> customEvent.accept(event), 2L);
             }
 
@@ -610,15 +593,6 @@ public class InventoryManager {
                         item.getDefaultConsumer().accept(event);
                         player.updateInventory();
                     }, delay));
-                    /*item.setDelayTask(Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                        if (!item.isCanClick()) {
-                            item.getError().cantClick(player, item);
-                            return;
-                        }
-                        item.setDelayTask(null);
-                        item.getDefaultConsumer().accept(event);
-                        player.updateInventory();
-                    }, item.getDelay()));*/
                 });
             }
         }
@@ -660,7 +634,6 @@ public class InventoryManager {
             RyseInventory mainInventory = inventories.get(player.getUniqueId());
 
             if (!mainInventory.isCloseAble()) {
-                //Bukkit.getScheduler().runTask(plugin, () -> mainInventory.open(player));
                 morePaperLib.scheduling().globalRegionalScheduler().run(() -> mainInventory.open(player));
                 return;
             }

@@ -564,7 +564,6 @@ public class RyseInventory {
      * @param page   Which page should be opened?
      */
     public void open(@NotNull Player player, @Nonnegative int page) {
-        //Bukkit.getScheduler().runTask(this.plugin, () -> initInventory(player, page, null, null));
         manager.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> initInventory(player, page, null, null));
     }
 
@@ -580,7 +579,6 @@ public class RyseInventory {
     public void open(@NotNull Player player, @Nonnegative int page, String @NotNull [] keys, Object @NotNull [] values) throws IllegalArgumentException {
         Preconditions.checkArgument(keys.length == values.length, StringConstants.INVALID_OBJECT);
 
-        //Bukkit.getScheduler().runTask(this.plugin, () -> initInventory(player, page, keys, values));
         manager.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> initInventory(player, page, keys, values));
     }
 
@@ -596,7 +594,6 @@ public class RyseInventory {
         Object[] values = data.values().toArray();
 
         open(player, page, keys, values);
-        //Bukkit.getScheduler().runTask(this.plugin, () -> initInventory(player, page, keys, values));
     }
 
     /**
@@ -610,7 +607,6 @@ public class RyseInventory {
     public void open(@NotNull Player player, String @NotNull [] keys, Object @NotNull [] values) throws IllegalArgumentException {
         Preconditions.checkArgument(keys.length == values.length, StringConstants.INVALID_OBJECT);
 
-        //Bukkit.getScheduler().runTask(this.plugin, () -> initInventory(player, 1, keys, values));
         open(player, 1, keys, values);
     }
 
@@ -624,7 +620,6 @@ public class RyseInventory {
         String[] keys = data.keySet().toArray(new String[0]);
         Object[] values = data.values().toArray();
 
-        //Bukkit.getScheduler().runTask(this.plugin, () -> initInventory(player, 1, keys, values));
         open(player, 1, keys, values);
     }
 
@@ -645,7 +640,6 @@ public class RyseInventory {
     private void initInventory(@NotNull Player player, @Nonnegative int page, @Nullable String[] keys, @Nullable Object[] values) {
         if (!manager.canOpen(player.getUniqueId())) {
             int finalPage = page;
-            //Bukkit.getScheduler().runTaskLater(this.plugin, () -> initInventory(player, finalPage, keys, values), 2);
             manager.getMorePaperLib().scheduling().globalRegionalScheduler().runDelayed(() -> initInventory(player, finalPage, keys, values), 2L);
             return;
         }
@@ -1081,7 +1075,6 @@ public class RyseInventory {
         if (!this.closeAble)
             throw new IllegalStateException("The #closeAfter() method could not be executed because you have forbidden closing the inventory by #preventClose.");
 
-        //Bukkit.getScheduler().runTaskLater(this.plugin, () -> close(player), this.closeAfter);
         manager.getMorePaperLib().scheduling().globalRegionalScheduler().runDelayed(() -> close(player), this.closeAfter);
     }
 
@@ -1457,7 +1450,6 @@ public class RyseInventory {
         this.itemAnimator.remove(animator);
 
         if (animator.getTask().getExecutionState() != ScheduledTask.ExecutionState.IDLE) return;
-        //if (!Bukkit.getScheduler().isQueued(animator.getTask().getTaskId())) return;
         animator.getTask().cancel();
     }
 
