@@ -594,6 +594,32 @@ public class InventoryContents {
     }
 
     /**
+     * Updates the ItemStack in the same place with a new ItemStack or sets if not found.
+     *
+     * @param row      The Row
+     * @param column   The Column
+     * @param itemStack The new ItemStack what should be displayed.
+     * @return true if the ItemStack was updated, false if set.
+     * @throws IllegalArgumentException if slot greater than 53 or slot greater than inventory size
+     */
+    public boolean updateOrSet(@Nonnegative int row, @Nonnegative int column, @NotNull ItemStack itemStack) {
+        return updateOrSet(SlotUtils.toSlot(row, column), IntelligentItem.empty(itemStack));
+    }
+
+    /**
+     * Updates the ItemStack in the same place with a new ItemStack or sets if not found.
+     *
+     * @param row      The Row
+     * @param column   The Column
+     * @param intelligentItem The new IntelligentItem what should be displayed.
+     * @return true if the ItemStack was updated, false if set.
+     * @throws IllegalArgumentException if slot greater than 53 or slot greater than inventory size
+     */
+    public boolean updateOrSet(@Nonnegative int row, @Nonnegative int column, @NotNull IntelligentItem intelligentItem) {
+        return updateOrSet(SlotUtils.toSlot(row, column), intelligentItem);
+    }
+
+    /**
      * @param slot The slot
      * @return true if the slot is ignored.
      */
@@ -1260,7 +1286,7 @@ public class InventoryContents {
                 return 0;
             case TOP_RIGHT:
                 return 8;
-            case BOTTM_LEFT:
+            case BOTTOM_LEFT:
                 return this.inventory.size(this) - 9;
             case BOTTOM_RIGHT:
                 return this.inventory.size(this) - 1;
