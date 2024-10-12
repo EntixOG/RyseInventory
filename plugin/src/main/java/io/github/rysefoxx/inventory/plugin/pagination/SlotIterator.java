@@ -27,6 +27,9 @@ package io.github.rysefoxx.inventory.plugin.pagination;
 
 import io.github.rysefoxx.inventory.plugin.pattern.SlotIteratorPattern;
 import io.github.rysefoxx.inventory.plugin.util.SlotUtils;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,32 +40,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class SlotIterator {
 
-    private int slot = -1;
-    private int endPosition = -1;
-    private SlotIteratorType type = SlotIteratorType.HORIZONTAL;
-    private boolean override;
-    private List<Integer> blackList = new ArrayList<>();
-    private SlotIteratorPattern pattern;
+    int slot = -1;
+    int endPosition = -1;
+    SlotIteratorType type = SlotIteratorType.HORIZONTAL;
+    boolean override;
+    List<Integer> blackList = new ArrayList<>();
+    SlotIteratorPattern pattern;
 
     @Contract(" -> new")
     public static @NotNull Builder builder() {
         return new Builder();
-    }
-
-    /**
-     * @return the pattern builder.
-     */
-    public @Nullable SlotIteratorPattern getPatternBuilder() {
-        return this.pattern;
-    }
-
-    /**
-     * @return the start slot
-     */
-    public @Nonnegative int getSlot() {
-        return this.slot;
     }
 
     /**
@@ -77,29 +68,6 @@ public class SlotIterator {
      */
     public @Nonnegative int getRow() {
         return SlotUtils.toRowAndColumn(this.slot).getLeft();
-    }
-
-    /**
-     * @return the SlotIteratorType
-     */
-    public @NotNull SlotIteratorType getType() {
-        return this.type;
-    }
-
-    /**
-     * @return true if items can be overwritten.
-     */
-    public boolean isOverride() {
-        return this.override;
-    }
-
-    /**
-     * @return where the last item should be placed.
-     * <p>
-     * If the endPosition was set, the {@link Pagination#setItemsPerPage(int)} specification is ignored.
-     */
-    public int getEndPosition() {
-        return this.endPosition;
     }
 
     /**
@@ -255,8 +223,7 @@ public class SlotIterator {
         }
 
         public SlotIterator build() {
-            if ((this.slotIterator.slot >= this.slotIterator.endPosition)
-                    && this.slotIterator.endPosition != -1)
+            if ((this.slotIterator.slot >= this.slotIterator.endPosition) && this.slotIterator.endPosition != -1)
                 throw new IllegalArgumentException("The start slot must be smaller than the end slot");
 
             if (this.slotIterator.slot == -1 && this.slotIterator.pattern == null)
@@ -265,5 +232,4 @@ public class SlotIterator {
             return this.slotIterator;
         }
     }
-
 }

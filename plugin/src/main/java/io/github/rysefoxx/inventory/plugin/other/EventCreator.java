@@ -42,8 +42,6 @@ import java.util.function.Consumer;
  * @author Rysefoxx | Rysefoxx#6772
  * @since 2/19/2022
  */
-@Getter
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public record EventCreator<T>(Class<T> clazz, Consumer<T> consumer) {
 
     public void accept(T t) {

@@ -25,37 +25,16 @@
 
 package io.github.rysefoxx.inventory.plugin.pagination;
 
-import io.github.rysefoxx.inventory.plugin.animator.SlideAnimation;
 import io.github.rysefoxx.inventory.plugin.content.IntelligentItem;
 import io.github.rysefoxx.inventory.plugin.content.InventoryContents;
-import io.github.rysefoxx.inventory.plugin.enums.*;
-import io.github.rysefoxx.inventory.plugin.events.*;
 import io.github.rysefoxx.inventory.plugin.listener.*;
 import io.github.rysefoxx.inventory.plugin.listener.own.*;
-import io.github.rysefoxx.inventory.plugin.other.EventCreator;
-import io.github.rysefoxx.inventory.plugin.util.InventoryUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.inventory.*;
-import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -65,36 +44,42 @@ import space.arim.morepaperlib.MorePaperLib;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 /**
  * @author Rysefoxx | Rysefoxx#6772
  * @since 2/17/2022
  */
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class InventoryManager {
 
-    private final Plugin plugin;
-    @Getter(AccessLevel.PUBLIC)
-    private final MorePaperLib morePaperLib;
+    Plugin plugin;
+    MorePaperLib morePaperLib;
+
+    @NonFinal
     @Getter(AccessLevel.PROTECTED)
-    private boolean invoked = false;
+    boolean invoked = false;
 
-    @Getter
-    private final HashMap<UUID, RyseInventory> inventories = new HashMap<>();
+    HashMap<UUID, RyseInventory> inventories;
+    HashMap<UUID, InventoryContents> content;
 
-    @Getter
-    private final HashMap<UUID, InventoryContents> content = new HashMap<>();
-
-
-    private final Set<IntelligentItem> items = new HashSet<>();
-    private final List<RyseInventory> cachedInventories = new ArrayList<>();
-    private final HashMap<UUID, ScheduledTask> updaterTask = new HashMap<>();
-    private final HashMap<UUID, List<RyseInventory>> lastInventories = new HashMap<>();
-    private final HashMap<UUID, Long> lastOpen = new HashMap<>();
+    Set<IntelligentItem> items;
+    List<RyseInventory> cachedInventories;
+    HashMap<UUID, ScheduledTask> updaterTask;
+    HashMap<UUID, List<RyseInventory>> lastInventories;
+    HashMap<UUID, Long> lastOpen;
 
     public InventoryManager(final Plugin plugin) {
         this.plugin = plugin;
         this.morePaperLib = new MorePaperLib(plugin);
+
+        this.inventories = new HashMap<>();
+        this.content = new HashMap<>();
+        this.items = new HashSet<>();
+        this.cachedInventories = new ArrayList<>();
+        this.updaterTask = new HashMap<>();
+        this.lastInventories = new HashMap<>();
+        this.lastOpen = new HashMap<>();
     }
 
 
@@ -142,7 +127,6 @@ public class InventoryManager {
         List<IntelligentItem> result = new ArrayList<>();
         for (IntelligentItem item : this.items) {
             if (item.getId() != id) continue;
-
             result.add(item);
         }
         return result;
@@ -169,7 +153,6 @@ public class InventoryManager {
         List<UUID> players = new ArrayList<>();
         Bukkit.getOnlinePlayers().forEach(player -> {
             Optional<RyseInventory> optional = getInventory(player.getUniqueId());
-
             optional.ifPresent(savedInventory -> {
                 if (!inventory.equals(savedInventory)) return;
                 players.add(player.getUniqueId());
@@ -189,7 +172,6 @@ public class InventoryManager {
         if (this.lastInventories.get(uuid).isEmpty()) return Optional.empty();
         RyseInventory inventory = this.lastInventories.get(uuid).remove(this.lastInventories.get(uuid).size() - 1);
         inventory.setBackward();
-
         return Optional.of(inventory);
     }
 
@@ -303,8 +285,7 @@ public class InventoryManager {
      * @param uuid      The UUID of the player
      * @param inventory The inventory to set.
      */
-    protected void setInventory(@NotNull UUID uuid,
-                                @NotNull RyseInventory inventory) {
+    protected void setInventory(@NotNull UUID uuid, @NotNull RyseInventory inventory) {
         this.inventories.put(uuid, inventory);
     }
 
@@ -319,11 +300,8 @@ public class InventoryManager {
                                     @NotNull RyseInventory inventory,
                                     @NotNull RyseInventory newInventory) {
         List<RyseInventory> inventoryList = this.lastInventories.getOrDefault(uuid, new ArrayList<>());
-
         if (inventory.equals(newInventory)) return;
-
         inventoryList.add(inventory);
-
         this.lastInventories.put(uuid, inventoryList);
     }
 
@@ -334,7 +312,6 @@ public class InventoryManager {
      */
     protected void stopUpdate(@NotNull UUID uuid) {
         if (!this.updaterTask.containsKey(uuid)) return;
-
         ScheduledTask task = this.updaterTask.remove(uuid);
         task.cancel();
     }
@@ -345,8 +322,7 @@ public class InventoryManager {
      * @param player    The player who's inventory is being updated.
      * @param inventory The inventory that will be updated.
      */
-    protected void invokeScheduler(@NotNull Player player,
-                                   @NotNull RyseInventory inventory) {
+    protected void invokeScheduler(@NotNull Player player, @NotNull RyseInventory inventory) {
         if (this.updaterTask.containsKey(player.getUniqueId())) return;
         if (!inventory.isUpdateTask()) return;
 

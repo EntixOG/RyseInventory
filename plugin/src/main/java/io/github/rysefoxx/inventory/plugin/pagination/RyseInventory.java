@@ -1017,10 +1017,8 @@ public class RyseInventory {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RyseInventory)) return false;
-        RyseInventory that = (RyseInventory) o;
-
-        return clearAndSafe == that.clearAndSafe && size == that.size && delay == that.delay && openDelay == that.openDelay && period == that.period && closeAfter == that.closeAfter && loadDelay == that.loadDelay && loadTitle == that.loadTitle && closeAble == that.closeAble && transferData == that.transferData && Objects.equals(title, that.title) && Objects.equals(slideAnimator, that.slideAnimator) && Objects.equals(identifier, that.identifier) && Objects.equals(titleHolder, that.titleHolder) && inventoryOpenerType == that.inventoryOpenerType && Objects.equals(options, that.options) && Objects.equals(events, that.events) && Objects.equals(ignoreClickEvent, that.ignoreClickEvent) && Objects.equals(closeReasons, that.closeReasons);
+        if (!(o instanceof RyseInventory ryseInventory)) return false;
+        return clearAndSafe == ryseInventory.clearAndSafe && size == ryseInventory.size && delay == ryseInventory.delay && openDelay == ryseInventory.openDelay && period == ryseInventory.period && closeAfter == ryseInventory.closeAfter && loadDelay == ryseInventory.loadDelay && loadTitle == ryseInventory.loadTitle && closeAble == ryseInventory.closeAble && transferData == ryseInventory.transferData && Objects.equals(title, ryseInventory.title) && Objects.equals(slideAnimator, ryseInventory.slideAnimator) && Objects.equals(identifier, ryseInventory.identifier) && Objects.equals(titleHolder, ryseInventory.titleHolder) && inventoryOpenerType == ryseInventory.inventoryOpenerType && Objects.equals(options, ryseInventory.options) && Objects.equals(events, ryseInventory.events) && Objects.equals(ignoreClickEvent, ryseInventory.ignoreClickEvent) && Objects.equals(closeReasons, ryseInventory.closeReasons);
     }
 
     /**
@@ -1084,17 +1082,17 @@ public class RyseInventory {
      * It removes all the active animations
      */
     private void removeActiveAnimations() {
-        for (int i = 0; i < this.itemAnimator.size(); i++)
-            removeItemAnimator(this.itemAnimator.get(i));
+        for (IntelligentItemNameAnimator intelligentItemNameAnimator : this.itemAnimator)
+            removeItemAnimator(intelligentItemNameAnimator);
 
-        for (int i = 0; i < this.titleAnimator.size(); i++)
-            removeTitleAnimator(this.titleAnimator.get(i));
+        for (IntelligentTitleAnimator intelligentTitleAnimator : this.titleAnimator)
+            removeTitleAnimator(intelligentTitleAnimator);
 
-        for (int i = 0; i < this.loreAnimator.size(); i++)
-            removeLoreAnimator(this.loreAnimator.get(i));
+        for (IntelligentItemLoreAnimator intelligentItemLoreAnimator : this.loreAnimator)
+            removeLoreAnimator(intelligentItemLoreAnimator);
 
-        for (int i = 0; i < this.materialAnimator.size(); i++)
-            removeMaterialAnimator(this.materialAnimator.get(i));
+        for (IntelligentMaterialAnimator intelligentMaterialAnimator : this.materialAnimator)
+            removeMaterialAnimator(intelligentMaterialAnimator);
 
         removeSlideAnimator();
     }
@@ -1526,12 +1524,10 @@ public class RyseInventory {
     public void loadByPage(@NotNull InventoryContents contents) {
         Pagination pagination = contents.pagination();
         SlotIterator iterator = contents.iterator();
-
         if (iterator == null) return;
 
         SlotIterator.SlotIteratorType type = iterator.getType();
-        SlotIteratorPattern pattern = iterator.getPatternBuilder();
-
+        SlotIteratorPattern pattern = iterator.getPattern();
         checkIfInventoryTypeIsValid(pattern);
 
         int itemsSet = 0;
@@ -1569,8 +1565,7 @@ public class RyseInventory {
         if (this.paginationCache == null)
             this.paginationCache = paginationData.newInstance();
 
-        for (int i = 0; i < data.size(); i++) {
-            IntelligentItemData itemData = data.get(i);
+        for (IntelligentItemData itemData : data) {
             if (itemData.getModifiedSlot() != -1) continue;
 
             int slot = paginationData.getFirstSlot();
@@ -1710,7 +1705,7 @@ public class RyseInventory {
 
                     List<IntelligentItemData> dataList = data.stream()
                             .filter(item -> item.getModifiedSlot() == -1)
-                            .collect(Collectors.toList());
+                            .toList();
 
                     if (dataList.isEmpty())
                         break;
@@ -2311,7 +2306,7 @@ public class RyseInventory {
             }
 
             if (this.ryseInventory.permanentCache)
-                this.ryseInventory.manager.addToCache(this.ryseInventory);
+                ryseInventory.manager.addToCache(this.ryseInventory);
 
             return this.ryseInventory;
         }
@@ -2360,7 +2355,7 @@ public class RyseInventory {
 
                     this.ryseInventory.manager = inventoryManager;
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException("The InventoryManager is not invoked. Please invoke it in the onEnable method.");
                 }
                 break;
             }
@@ -2369,11 +2364,9 @@ public class RyseInventory {
 
     private List<Field> getAllFields(List<Field> fields, Class<?> type) {
         fields.addAll(Arrays.asList(type.getDeclaredFields()));
-
         if (type.getSuperclass() != null) {
             getAllFields(fields, type.getSuperclass());
         }
-
         return fields;
     }
 }

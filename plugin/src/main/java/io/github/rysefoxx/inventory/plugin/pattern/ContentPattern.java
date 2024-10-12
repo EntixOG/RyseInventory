@@ -28,6 +28,8 @@ package io.github.rysefoxx.inventory.plugin.pattern;
 import io.github.rysefoxx.inventory.plugin.content.IntelligentItem;
 import io.github.rysefoxx.inventory.plugin.content.InventoryContents;
 import io.github.rysefoxx.inventory.plugin.enums.IntelligentType;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -42,13 +44,15 @@ import java.util.List;
  * @author Rysefoxx | Rysefoxx#6772
  * @since 6/11/2022
  */
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ContentPattern {
 
-    private final InventoryContents contents;
-    private final List<String> lines = new ArrayList<>();
+    InventoryContents contents;
+    List<String> lines;
 
     public ContentPattern(@NotNull InventoryContents contents) {
         this.contents = contents;
+        this.lines = new ArrayList<>();
     }
 
     /**

@@ -36,7 +36,7 @@ public final class RyseInventoryPlugin extends JavaPlugin {
         getLogger().info("");
         getLogger().severe("RyseInventory is no longer supported as a plugin.");
         getLogger().severe("Please use our API which you can find on my Github account.");
-        getLogger().severe(" -> https://github.com/Rysefoxx/RyseInventory");
+        getLogger().severe(" -> https://github.com/EntixOG/RyseInventory");
         getLogger().info("");
     }
 }

@@ -1322,21 +1322,12 @@ public class InventoryContents {
 
         endSlot = even ? (int) (((middle * 9) + 9) - 1) : (int) ((middle * 9) - 1);
 
-        switch (type) {
-            case CHEST:
-            case ENDER_CHEST: {
-                return (even ? slot >= endSlot - 18 : slot >= endSlot - 9) && (slot <= endSlot);
-            }
-            case HOPPER: {
-                return slot == 2;
-            }
-            case DROPPER:
-            case DISPENSER:
-            case CRAFTING_TABLE: {
-                return slot >= 3 && slot <= 5;
-            }
-        }
-        return false;
+        return switch (type) {
+            case CHEST, ENDER_CHEST -> (even ? slot >= endSlot - 18 : slot >= endSlot - 9) && (slot <= endSlot);
+            case HOPPER -> slot == 2;
+            case DROPPER, DISPENSER, CRAFTING_TABLE -> slot >= 3 && slot <= 5;
+            default -> false;
+        };
 
     }
 
@@ -1366,28 +1357,14 @@ public class InventoryContents {
 
         InventoryOpenerType type = this.inventory.getInventoryOpenerType();
 
-        switch (type) {
-            case CHEST:
-            case ENDER_CHEST: {
-                return slot == 8 || slot == 17 || slot == 26 || slot == 35 || slot == 44 || slot == 53;
-            }
-            case HOPPER: {
-                return slot == 4;
-            }
-            case DROPPER:
-            case DISPENSER:
-            case CRAFTING_TABLE: {
-                return slot == 2 || slot == 5 || slot == 8;
-            }
-            case FURNACE:
-            case BREWING_STAND: {
-                return slot == 2;
-            }
-            case ENCHANTMENT_TABLE: {
-                return slot == 1;
-            }
-        }
-        return false;
+        return switch (type) {
+            case CHEST, ENDER_CHEST -> slot == 8 || slot == 17 || slot == 26 || slot == 35 || slot == 44 || slot == 53;
+            case HOPPER -> slot == 4;
+            case DROPPER, DISPENSER, CRAFTING_TABLE -> slot == 2 || slot == 5 || slot == 8;
+            case FURNACE, BREWING_STAND -> slot == 2;
+            case ENCHANTMENT_TABLE -> slot == 1;
+            default -> false;
+        };
     }
 
     /**
@@ -1425,21 +1402,12 @@ public class InventoryContents {
                 && type != InventoryOpenerType.HOPPER)
             throw new IllegalStateException("isCorner only works for chests, ender chests, hoppers, dispensers, crafting tables, and droppers");
 
-        switch (type) {
-            case CHEST:
-            case ENDER_CHEST: {
-                return slot == 0 || slot == 8 || slot == inventorySize - 1 || slot == inventorySize - 9;
-            }
-            case HOPPER: {
-                return slot == 0 || slot == 4;
-            }
-            case DROPPER:
-            case DISPENSER:
-            case CRAFTING_TABLE: {
-                return slot == 0 || slot == 2 || slot == 6 || slot == 8;
-            }
-        }
-        return false;
+        return switch (type) {
+            case CHEST, ENDER_CHEST -> slot == 0 || slot == 8 || slot == inventorySize - 1 || slot == inventorySize - 9;
+            case HOPPER -> slot == 0 || slot == 4;
+            case DROPPER, DISPENSER, CRAFTING_TABLE -> slot == 0 || slot == 2 || slot == 6 || slot == 8;
+            default -> false;
+        };
     }
 
     /**
@@ -1468,28 +1436,14 @@ public class InventoryContents {
 
         InventoryOpenerType type = this.inventory.getInventoryOpenerType();
 
-        switch (type) {
-            case CHEST:
-            case ENDER_CHEST: {
-                return slot <= 8;
-            }
-            case HOPPER:
-            case ENCHANTMENT_TABLE: {
-                return true;
-            }
-            case FURNACE: {
-                return slot == 0;
-            }
-            case BREWING_STAND: {
-                return slot == 3 || slot == 4;
-            }
-            case DROPPER:
-            case DISPENSER:
-            case CRAFTING_TABLE: {
-                return slot <= 2;
-            }
-        }
-        return false;
+        return switch (type) {
+            case CHEST, ENDER_CHEST -> slot <= 8;
+            case HOPPER, ENCHANTMENT_TABLE -> true;
+            case FURNACE -> slot == 0;
+            case BREWING_STAND -> slot == 3 || slot == 4;
+            case DROPPER, DISPENSER, CRAFTING_TABLE -> slot <= 2;
+            default -> false;
+        };
     }
 
     /**
@@ -1518,26 +1472,13 @@ public class InventoryContents {
         InventoryOpenerType type = this.inventory.getInventoryOpenerType();
         int inventorySize = this.inventory.size(this);
 
-        switch (type) {
-            case CHEST:
-            case ENDER_CHEST: {
-                return (slot >= inventorySize - 9) && (slot <= inventorySize);
-            }
-            case HOPPER:
-            case ENCHANTMENT_TABLE: {
-                return true;
-            }
-            case FURNACE:
-            case BREWING_STAND: {
-                return slot == 1;
-            }
-            case DROPPER:
-            case DISPENSER:
-            case CRAFTING_TABLE: {
-                return (slot >= inventorySize - 3) && (slot <= inventorySize);
-            }
-        }
-        return false;
+        return switch (type) {
+            case CHEST, ENDER_CHEST -> (slot >= inventorySize - 9) && (slot <= inventorySize);
+            case HOPPER, ENCHANTMENT_TABLE -> true;
+            case FURNACE, BREWING_STAND -> slot == 1;
+            case DROPPER, DISPENSER, CRAFTING_TABLE -> (slot >= inventorySize - 3) && (slot <= inventorySize);
+            default -> false;
+        };
     }
 
     /**
@@ -1565,24 +1506,12 @@ public class InventoryContents {
 
         InventoryOpenerType type = this.inventory.getInventoryOpenerType();
 
-        switch (type) {
-            case CHEST:
-            case ENDER_CHEST: {
-                return slot == 0 || slot == 9 || slot == 18 || slot == 27 || slot == 36 || slot == 45;
-            }
-            case HOPPER:
-            case ENCHANTMENT_TABLE:
-            case FURNACE:
-            case BREWING_STAND: {
-                return slot == 0;
-            }
-            case DROPPER:
-            case DISPENSER:
-            case CRAFTING_TABLE: {
-                return slot == 0 || slot == 3 || slot == 6;
-            }
-        }
-        return false;
+        return switch (type) {
+            case CHEST, ENDER_CHEST -> slot == 0 || slot == 9 || slot == 18 || slot == 27 || slot == 36 || slot == 45;
+            case HOPPER, ENCHANTMENT_TABLE, FURNACE, BREWING_STAND -> slot == 0;
+            case DROPPER, DISPENSER, CRAFTING_TABLE -> slot == 0 || slot == 3 || slot == 6;
+            default -> false;
+        };
     }
 
     /**

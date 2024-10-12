@@ -27,6 +27,9 @@ package io.github.rysefoxx.inventory.plugin.pattern;
 
 import io.github.rysefoxx.inventory.plugin.content.IntelligentItem;
 import io.github.rysefoxx.inventory.plugin.content.InventoryContents;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -42,13 +45,15 @@ import java.util.stream.Collectors;
  * @author Rysefoxx | Rysefoxx#6772
  * @since 6/11/2022
  */
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SearchPattern {
 
-    private final InventoryContents contents;
-    private final List<String> lines = new ArrayList<>();
+    InventoryContents contents;
+    List<String> lines;
 
     public SearchPattern(@NotNull InventoryContents contents) {
         this.contents = contents;
+        this.lines = new ArrayList<>();
     }
 
     /**
@@ -68,7 +73,7 @@ public class SearchPattern {
     /**
      * Defines the pattern to be searched for.
      *
-     * @param line The line of the pattern.
+     * @param line   The line of the pattern.
      * @param amount How often this pattern should be repeated.
      * @throws IllegalArgumentException If the line length is not 9 or the amount is higher than 6.
      */
@@ -76,7 +81,7 @@ public class SearchPattern {
         if (line.length() != 9)
             throw new IllegalArgumentException("Passed pattern must contain 9 characters");
 
-        if(amount > 6)
+        if (amount > 6)
             throw new IllegalArgumentException("Passed amount must be lower than 6");
 
         for (int i = 0; i < amount; i++)

@@ -1,7 +1,9 @@
 package io.github.rysefoxx.inventory.plugin.pagination;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnegative;
@@ -9,12 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@NoArgsConstructor
 @Getter
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PaginationData {
 
-    private final List<Integer> slots = new ArrayList<>();
-    private final List<Integer> pages = new ArrayList<>();
+    List<Integer> slots = new ArrayList<>();
+    List<Integer> pages = new ArrayList<>();
 
     public PaginationData(@NotNull PaginationData paginationData) {
         this.slots.addAll(paginationData.slots);
@@ -31,24 +34,20 @@ public class PaginationData {
     }
 
     public int getFirstSlot() {
-        if (this.slots.isEmpty())
-            return -1;
-
+        if (this.slots.isEmpty()) return -1;
         return this.slots.remove(0);
     }
 
     public int getFirstPage() {
-        if (this.pages.isEmpty())
-            return -1;
-
+        if (this.pages.isEmpty()) return -1;
         return this.pages.remove(0);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PaginationData that = (PaginationData) o;
-        return Objects.equals(slots, that.slots) && Objects.equals(pages, that.pages);
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        PaginationData paginationData = (PaginationData) object;
+        return Objects.equals(slots, paginationData.slots) && Objects.equals(pages, paginationData.pages);
     }
 }
