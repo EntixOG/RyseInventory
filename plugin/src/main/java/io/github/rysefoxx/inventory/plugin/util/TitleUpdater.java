@@ -16,6 +16,8 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Set;
 
 /**
@@ -103,9 +105,18 @@ public final class TitleUpdater {
             }
 
             if (XReflection.supports(20)) {
-                InventoryView open = player.getOpenInventory();
-                if (UNOPENABLES.contains(open.getType().name())) return;
-                open.setTitle(newTitle);
+                try {
+                    Object view = player.getOpenInventory();
+                    Method getType = view.getClass().getMethod("getType");
+                    getType.setAccessible(true);
+                    InventoryType inventoryType = (InventoryType) getType.invoke(view);
+                    if (UNOPENABLES.contains(inventoryType.name())) return;
+                    Method setTitle = view.getClass().getMethod("setTitle", String.class);
+                    setTitle.setAccessible(true);
+                    setTitle.invoke(view, newTitle);
+                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
+                    throw new RuntimeException(ex);
+                }
                 return;
             }
 
